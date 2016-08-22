@@ -1,4 +1,4 @@
-package dungeonrunner.migration;
+package dungeonrunner.arena;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,65 +24,19 @@ import dungeonrunner.system.dao.AbstractDao;
 import dungeonrunner.system.dao.DaoException;
 import dungeonrunner.system.dao.RowTransformer;
 import dungeonrunner.system.util.Lambda;
-import dungeonrunner.system.util.Log;
 
-import javax.persistence.PersistenceException;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
  * @author Michael Lieshoff
  */
-public class SchemaVersionDao extends AbstractDao {
+public class ArenaDao extends AbstractDao {
 
-    public static final String TABLE = "schemaversion";
+    public static final String TABLE = "arena";
 
     @Inject
     private EbeanServer ebeanServer;
-
-    public void init(final boolean dropAndCreate) throws DaoException {
-        doInDao(new Lambda<Void>() {
-            @Override
-            public Void exec(Object... params) throws SQLException {
-                boolean mustUpdate = false;
-                try {
-                    querySingle(ebeanServer, new RowTransformer<Object>() {
-                        @Override
-                        public Object transform(SqlRow sqlRow) throws SQLException {
-                            return null;
-                        }
-                    }, "SELECT MAX(id) FROM " + TABLE);
-                } catch (PersistenceException e) {
-                    mustUpdate = true;
-                }
-                if (mustUpdate || dropAndCreate) {
-                    int i = update(ebeanServer, "DROP TABLE IF EXISTS schemaversion;");
-                    Log.info(this, "init", "drop table: %s", i);
-                    i = update(ebeanServer, "CREATE TABLE schemaversion("
-                            + "id INTEGER, "
-                            + "version INTEGER NOT NULL, "
-                            + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
-                            + "PRIMARY KEY (id))");
-                    Log.info(this, "init", "create table: %s", i);
-                }
-                return null;
-            }});
-    }
-
-    public void executeScript(final String script) throws DaoException {
-        doInDao(new Lambda<Void>() {
-            @Override
-            public Void exec(Object... params) throws SQLException {
-                String[] split = script.split("[;]");
-                for (String sql : split) {
-                    if (sql.length() > 2 && !sql.startsWith("--")) {
-                        int updates = execute(ebeanServer, sql);
-                        Log.info(this, "executeScript", "    updates: %s", updates);
-                    }
-                }
-                return null;
-            }});
-    }
 
     public int readLastSchemaVersion() throws DaoException {
         return doInDao(new Lambda<Integer>() {

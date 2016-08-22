@@ -52,7 +52,6 @@ public class SchemaVersionManager extends JdbcTemplate {
                 Log.warn(this, "migrate", "execute script for: %s", filename);
                 String script = IOUtils.toString(inputStream);
                 schemaVersionDao.executeScript(script);
-                // set new schema version
                 schemaVersionDao.setLastSchemaVersion(newSchemaVersion);
             } else {
                 Log.warn(this, "migrate", "migration not found: %s", filename);

@@ -1,4 +1,4 @@
-package dungeonrunner.service;
+package dungeonrunner.arena;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,20 +17,22 @@ package dungeonrunner.service;
  * limitations under the License.
  */
 
-import dungeonrunner.system.util.Factory;
+import dungeonrunner.Dungeon;
+import dungeonrunner.Lounge;
+import dungeonrunner.Vault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michael Lieshoff
  */
-public class ServiceFactory extends Factory {
-    private static final ServiceFactory INSTANCE = new ServiceFactory();
+public class Arena {
 
-    public static <T> T getService(Class<T> clazz) {
-        try {
-            return INSTANCE.create(clazz);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    private List<Dungeon> dungeons = new ArrayList<>();
+
+    private List<Lounge> lounges = new ArrayList<>();
+
+    private List<Vault> vaults = new ArrayList<>();
 
 }

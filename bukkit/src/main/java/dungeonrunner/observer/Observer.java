@@ -17,10 +17,12 @@ package dungeonrunner.observer;
  * limitations under the License.
  */
 
-import dungeonrunner.ArenaManager;
+import dungeonrunner.arena.ArenaManager;
+import dungeonrunner.entrance.EnterEntranceTicket;
+import dungeonrunner.entrance.EntranceManager;
 import dungeonrunner.system.Inject;
-import dungeonrunner.system.util.Log;
 import dungeonrunner.system.MiniDI;
+import dungeonrunner.system.util.Log;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayDeque;
@@ -65,16 +67,15 @@ public class Observer {
             EnterArenaTicket enterArenaTicket = (EnterArenaTicket) ticket;
             Log.info(this, "processTicket", "enterArenaTicket.player=%s", player.getName());
             MiniDI.get(ArenaManager.class).enterArena(player);
+        } else if (ticket instanceof EnterEntranceTicket) {
+            Log.info(this, "processTicket", "enterEntranceTicket.player=%s", player.getName());
+            MiniDI.get(EntranceManager.class).enter(player);
         }
     }
 
     private Thread thread = new Thread(runnable);
 
     private volatile boolean running;
-
-    public void enterArena(Player player) {
-        tickets.add(new EnterArenaTicket(player));
-    }
 
     public void start() {
         if (!running) {
@@ -88,6 +89,14 @@ public class Observer {
             Log.info(this, "stop", "stopping...");
             running = false;
         }
+    }
+
+    public void enterArena(Player player) {
+        tickets.add(new EnterArenaTicket(player));
+    }
+
+    public void enterEntrance(Player player) {
+        tickets.add(new EnterEntranceTicket(player));
     }
 
 }

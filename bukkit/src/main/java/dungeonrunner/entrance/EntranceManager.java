@@ -1,4 +1,4 @@
-package dungeonrunner.service;
+package dungeonrunner.entrance;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,22 +17,30 @@ package dungeonrunner.service;
  * limitations under the License.
  */
 
-import dungeonrunner.system.migration.Migrator;
-import dungeonrunner.system.util.Lambda;
+import dungeonrunner.location.LocationDao;
+import dungeonrunner.location.LocationType;
+import dungeonrunner.system.Inject;
+import dungeonrunner.system.dao.DaoException;
+import org.bukkit.entity.Player;
 
 /**
  * @author Michael Lieshoff
  */
-public class MigrationService extends Service {
+public class EntranceManager {
 
-    public void migrate(final boolean dropAndCreate) throws ServiceException {
-        doInService(new Lambda<Void>() {
-            @Override
-            public Void exec(Object... params) throws Exception {
-                new Migrator().migrate(dropAndCreate);
-                return null;
-            }
-        });
+    @Inject
+    private LocationDao locationDao;
+
+    public void enter(Player player) {
+
+    }
+
+    public boolean exists() throws DaoException {
+        return locationDao.exists(LocationType.ENTRANCE);
+    }
+
+    public void create() throws DaoException {
+        locationDao.create(LocationType.ENTRANCE, 1);
     }
 
 }

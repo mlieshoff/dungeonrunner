@@ -18,11 +18,19 @@ package dungeonrunner;
  */
 
 import com.avaje.ebean.EbeanServer;
+import dungeonrunner.arena.ArenaDao;
+import dungeonrunner.arena.ArenaManager;
+import dungeonrunner.entrance.EntranceDao;
+import dungeonrunner.entrance.EntranceManager;
 import dungeonrunner.migration.SchemaVersionDao;
 import dungeonrunner.migration.SchemaVersionManager;
 import dungeonrunner.observer.Observer;
+import dungeonrunner.player.PlayerDao;
+import dungeonrunner.player.PlayerManager;
+import dungeonrunner.system.dao.DaoException;
 import dungeonrunner.system.util.Log;
 import dungeonrunner.system.MiniDI;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -35,14 +43,21 @@ public class DrPlugin extends JavaPlugin implements Listener {
 
     private Observer observer;
 
+    private PlayerManager playerManager;
+
     @Override
     public void onLoad() {
         super.onLoad();
         Log.init(this);
         MiniDI.register(EbeanServer.class, getDatabase());
         MiniDI.register(
-                Observer.class,
                 ArenaManager.class,
+                ArenaDao.class,
+                EntranceManager.class,
+                EntranceDao.class,
+                Observer.class,
+                PlayerManager.class,
+                PlayerDao.class,
                 SchemaVersionManager.class,
                 SchemaVersionDao.class
         );
@@ -55,6 +70,8 @@ public class DrPlugin extends JavaPlugin implements Listener {
         }
 
         observer = MiniDI.get(Observer.class);
+        playerManager = MiniDI.get(PlayerManager.class);
+
     }
 
     @Override
@@ -72,8 +89,16 @@ public class DrPlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
-        Log.info(this, "onLogin", "player=%s", event.getPlayer().getName());
-        observer.enterArena(event.getPlayer());
+        Player player = event.getPlayer();
+        Log.info(this, "onLogin", "player=%s", player.getName());
+
+        try {
+            playerManager.login(player);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+
+        observer.enterEntrance(event.getPlayer());
     }
 
 }

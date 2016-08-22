@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.entrance;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,24 +17,17 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+
+import dungeonrunner.observer.Ticket;
 import org.bukkit.entity.Player;
 
 /**
  * @author Michael Lieshoff
  */
-public class ArenaManager {
+public class EnterEntranceTicket extends Ticket {
 
-    public void enterArena(Player player) {
-        Arena arena = findFreeArena();
-        if (arena == null) {
-            // create new one
-        } else {
-            // error, server is full
-        }
-    }
-
-    private Arena findFreeArena() {
-        return null;
+    public EnterEntranceTicket(Player player) {
+        super(player);
     }
 
 }

@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.location;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -26,41 +26,35 @@ import dungeonrunner.system.dao.RowTransformer;
 import dungeonrunner.system.util.Lambda;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author Michael Lieshoff
  */
-public class ArenaDao extends AbstractDao {
+public class LocationDao extends AbstractDao {
 
-    public static final String TABLE = "arena";
+    public static final String TABLE = "location";
 
     @Inject
     private EbeanServer ebeanServer;
 
-    public int readLastSchemaVersion() throws DaoException {
-        return doInDao(new Lambda<Integer>() {
+    public boolean exists(final LocationType locationType) throws DaoException {
+        return doInDao(new Lambda<Boolean>() {
             @Override
-            public Integer exec(Object... params) throws SQLException {
-                List<Integer> list = query(ebeanServer, new RowTransformer<Integer>() {
+            public Boolean exec(Object... params) throws SQLException {
+                return querySingle(ebeanServer, new RowTransformer<Boolean>() {
                     @Override
-                    public Integer transform(SqlRow sqlRow) throws SQLException {
-                        return sqlRow.getInteger("max(version)");
+                    public Boolean transform(SqlRow sqlRow) throws SQLException {
+                        return sqlRow.getInteger("count(*)") > 0;
                     }
-                }, "SELECT MAX(version) FROM " + TABLE);
-                if (list.size() > 0) {
-                    return list.get(0);
-                }
-                return 0;
+                }, "SELECT count(*) FROM " + TABLE + " where type = ?", locationType.getCode());
             }});
     }
 
-    public void setLastSchemaVersion(final int lastSchemaVersion) throws DaoException {
-        doInDao(new Lambda<Void>() {
+    public boolean create(final LocationType locationType, final int id) throws DaoException {
+        return doInDao(new Lambda<Boolean>() {
             @Override
-            public Void exec(Object... params) throws SQLException {
-                update(ebeanServer, "INSERT INTO schemaversion (version) VALUES(?);", lastSchemaVersion);
-                return null;
+            public Boolean exec(Object... params) throws SQLException {
+                return update(ebeanServer, "insert into location (id, type) values(?, ?)", id, locationType.getCode()) == 1;
             }});
     }
 

@@ -1,6 +1,4 @@
-package dungeonrunner;
-
-/*
+package dungeonrunner.player;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,18 +15,19 @@ package dungeonrunner;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Michael Lieshoff
  */
-public class Arena {
+public class DungeonRunner {
 
-    private List<Dungeon> dungeons = new ArrayList<>();
+    private final int id;
 
-    private List<Lounge> lounges = new ArrayList<>();
+    public DungeonRunner(int id) {
+        this.id = id;
+    }
 
-    private List<Vault> vaults = new ArrayList<>();
+    public int getId() {
+        return id;
+    }
 
 }

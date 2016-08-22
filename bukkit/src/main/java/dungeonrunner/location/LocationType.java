@@ -1,6 +1,4 @@
-package dungeonrunner.service;
-
-/*
+package dungeonrunner.location;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,10 +18,19 @@ package dungeonrunner.service;
 /**
  * @author Michael Lieshoff
  */
-public class ServiceException extends Exception {
+public enum LocationType {
 
-    public ServiceException(Exception e) {
-        super(e);
+    ENTRANCE(1)
+    ;
+
+    private final int code;
+
+    LocationType(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
     }
 
 }
