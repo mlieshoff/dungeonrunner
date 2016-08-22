@@ -18,12 +18,12 @@ package dungeonrunner.observer;
  */
 
 import dungeonrunner.arena.ArenaManager;
-import dungeonrunner.entrance.EnterEntranceTicket;
 import dungeonrunner.entrance.EntranceManager;
+import dungeonrunner.player.DungeonRunner;
 import dungeonrunner.system.Inject;
 import dungeonrunner.system.MiniDI;
+import dungeonrunner.system.dao.DaoException;
 import dungeonrunner.system.util.Log;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -61,15 +61,12 @@ public class Observer {
     };
 
     private void processTicket(Ticket ticket) {
-        Player player = ticket.getPlayer();
+        DungeonRunner dungeonRunner = ticket.getDungeonRunner();
 
         if (ticket instanceof EnterArenaTicket) {
             EnterArenaTicket enterArenaTicket = (EnterArenaTicket) ticket;
-            Log.info(this, "processTicket", "enterArenaTicket.player=%s", player.getName());
-            MiniDI.get(ArenaManager.class).enterArena(player);
-        } else if (ticket instanceof EnterEntranceTicket) {
-            Log.info(this, "processTicket", "enterEntranceTicket.player=%s", player.getName());
-            MiniDI.get(EntranceManager.class).enter(player);
+            Log.info(this, "processTicket", "enterArenaTicket.player=%s", dungeonRunner.getUuid());
+//            MiniDI.get(ArenaManager.class).enterArena(dungeonRunner);
         }
     }
 
@@ -91,12 +88,16 @@ public class Observer {
         }
     }
 
-    public void enterArena(Player player) {
-        tickets.add(new EnterArenaTicket(player));
+    public void enterArena(DungeonRunner dungeonRunner) {
+        tickets.add(new EnterArenaTicket(dungeonRunner));
     }
 
-    public void enterEntrance(Player player) {
-        tickets.add(new EnterEntranceTicket(player));
+    public void enterEntrance(DungeonRunner dungeonRunner) {
+        try {
+            MiniDI.get(EntranceManager.class).enter(dungeonRunner);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
     }
 
 }

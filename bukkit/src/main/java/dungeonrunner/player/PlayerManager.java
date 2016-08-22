@@ -31,12 +31,13 @@ public class PlayerManager {
     @Inject
     private PlayerDao playerDao;
 
-    public void login(Player player) throws DaoException {
+    public DungeonRunner login(Player player) throws DaoException {
         UUID uuid = player.getUniqueId();
         DungeonRunner dungeonRunner = playerDao.find(uuid);
         if (dungeonRunner == null) {
-            playerDao.register(player);
+            dungeonRunner = playerDao.register(player);
         }
+        return dungeonRunner;
     }
 
 }

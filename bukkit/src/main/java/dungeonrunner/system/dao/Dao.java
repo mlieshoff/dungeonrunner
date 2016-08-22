@@ -17,18 +17,9 @@ package dungeonrunner.system.dao;
  * limitations under the License.
  */
 
-import dungeonrunner.system.util.Lambda;
-
 /**
  * @author Michael Lieshoff
  */
-public class Dao extends JdbcTemplate {
+public interface Dao {
 
-    public <T> T doInDao(Lambda<T> lambda, Object... objects) throws DaoException {
-        try {
-            return lambda.exec(new Object[0]);
-        } catch (Exception var4) {
-            throw new DaoException(var4);
-        }
-    }
 }

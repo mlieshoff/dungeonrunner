@@ -18,15 +18,15 @@ package dungeonrunner.observer;
  */
 
 
-import org.bukkit.entity.Player;
+import dungeonrunner.player.DungeonRunner;
 
 /**
  * @author Michael Lieshoff
  */
 public class EnterArenaTicket extends Ticket {
 
-    public EnterArenaTicket(Player player) {
-        super(player);
+    public EnterArenaTicket(DungeonRunner dungeonRunner) {
+        super(dungeonRunner);
     }
 
 }

@@ -18,9 +18,24 @@ package dungeonrunner.system.dao;
  */
 
 
+import com.avaje.ebean.EbeanServer;
+import dungeonrunner.system.util.Lambda;
+
 /**
  * @author Michael Lieshoff
  */
-public abstract class AbstractDao extends Dao {
+public abstract class AbstractDao implements Dao {
+
+    public <T> T doInDao(EbeanServer ebeanServer, Lambda<T> lambda) throws DaoException {
+        try {
+            ebeanServer.beginTransaction();
+            T t = lambda.exec();
+            ebeanServer.commitTransaction();
+            return t;
+        } catch (Exception e) {
+            ebeanServer.rollbackTransaction();
+            throw new DaoException(e);
+        }
+    }
 
 }

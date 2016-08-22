@@ -15,19 +15,24 @@ package dungeonrunner.player;/*
  * limitations under the License.
  */
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * @author Michael Lieshoff
  */
+@Entity
+@Table(name = "dr_dungeonrunner")
 public class DungeonRunner {
 
-    private final int id;
+    private String uuid;
 
-    public DungeonRunner(int id) {
-        this.id = id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public int getId() {
-        return id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 }

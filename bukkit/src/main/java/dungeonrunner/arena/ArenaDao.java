@@ -18,50 +18,16 @@ package dungeonrunner.arena;
  */
 
 import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.SqlRow;
 import dungeonrunner.system.Inject;
 import dungeonrunner.system.dao.AbstractDao;
-import dungeonrunner.system.dao.DaoException;
-import dungeonrunner.system.dao.RowTransformer;
-import dungeonrunner.system.util.Lambda;
-
-import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author Michael Lieshoff
  */
 public class ArenaDao extends AbstractDao {
 
-    public static final String TABLE = "arena";
-
     @Inject
     private EbeanServer ebeanServer;
 
-    public int readLastSchemaVersion() throws DaoException {
-        return doInDao(new Lambda<Integer>() {
-            @Override
-            public Integer exec(Object... params) throws SQLException {
-                List<Integer> list = query(ebeanServer, new RowTransformer<Integer>() {
-                    @Override
-                    public Integer transform(SqlRow sqlRow) throws SQLException {
-                        return sqlRow.getInteger("max(version)");
-                    }
-                }, "SELECT MAX(version) FROM " + TABLE);
-                if (list.size() > 0) {
-                    return list.get(0);
-                }
-                return 0;
-            }});
-    }
-
-    public void setLastSchemaVersion(final int lastSchemaVersion) throws DaoException {
-        doInDao(new Lambda<Void>() {
-            @Override
-            public Void exec(Object... params) throws SQLException {
-                update(ebeanServer, "INSERT INTO schemaversion (version) VALUES(?);", lastSchemaVersion);
-                return null;
-            }});
-    }
 
 }

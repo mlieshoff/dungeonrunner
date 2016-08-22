@@ -18,15 +18,12 @@ package dungeonrunner.player;
  */
 
 import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.SqlRow;
 import dungeonrunner.system.Inject;
 import dungeonrunner.system.dao.AbstractDao;
 import dungeonrunner.system.dao.DaoException;
-import dungeonrunner.system.dao.RowTransformer;
 import dungeonrunner.system.util.Lambda;
 import org.bukkit.entity.Player;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -34,32 +31,30 @@ import java.util.UUID;
  */
 public class PlayerDao extends AbstractDao {
 
-    public static final String TABLE = "player";
-
     @Inject
     private EbeanServer ebeanServer;
 
     public DungeonRunner find(final UUID uuid) throws DaoException {
-        return doInDao(new Lambda<DungeonRunner>() {
+        return doInDao(ebeanServer, new Lambda<DungeonRunner>() {
             @Override
             public DungeonRunner exec(Object... params) throws Exception {
-                return querySingle(ebeanServer, new RowTransformer<DungeonRunner>() {
-                    @Override
-                    public DungeonRunner transform(SqlRow sqlRow) throws SQLException {
-                        DungeonRunner dungeonRunner = new DungeonRunner(sqlRow.getInteger("id"));
-                        return dungeonRunner;
-                    }
-                }, "select id from player where uuid=?", uuid.toString());
+                return ebeanServer
+                        .createQuery(DungeonRunner.class)
+                        .where("uuid=:uuid")
+                        .setParameter("uuid", uuid.toString())
+                        .findUnique();
             }
         });
     }
 
-    public void register(final Player player) throws DaoException {
-        doInDao(new Lambda<Void>() {
+    public DungeonRunner register(final Player player) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<DungeonRunner>() {
             @Override
-            public Void exec(Object... params) throws Exception {
-                update(ebeanServer, "insert into player (uuid) values(?)", player.getUniqueId().toString());
-                return null;
+            public DungeonRunner exec(Object... params) throws Exception {
+                DungeonRunner dungeonRunner = new DungeonRunner();
+                dungeonRunner.setUuid(player.getUniqueId().toString());
+                ebeanServer.save(dungeonRunner);
+                return dungeonRunner;
             }
         });
     }

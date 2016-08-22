@@ -17,30 +17,39 @@ package dungeonrunner.entrance;
  * limitations under the License.
  */
 
+import dungeonrunner.location.Location;
 import dungeonrunner.location.LocationDao;
 import dungeonrunner.location.LocationType;
+import dungeonrunner.player.DungeonRunner;
 import dungeonrunner.system.Inject;
 import dungeonrunner.system.dao.DaoException;
-import org.bukkit.entity.Player;
 
 /**
  * @author Michael Lieshoff
  */
 public class EntranceManager {
 
+    private Location entrance;
+
     @Inject
     private LocationDao locationDao;
 
-    public void enter(Player player) {
-
+    public void enter(DungeonRunner dungeonRunner) throws DaoException {
+        locationDao.assign(dungeonRunner, entrance);
     }
 
-    public boolean exists() throws DaoException {
-        return locationDao.exists(LocationType.ENTRANCE);
+    public Location find() throws DaoException {
+        if (entrance == null) {
+            entrance = locationDao.find(LocationType.ENTRANCE, 1);
+        }
+        return entrance;
     }
 
-    public void create() throws DaoException {
-        locationDao.create(LocationType.ENTRANCE, 1);
+    public Location create() throws DaoException {
+        if (entrance == null) {
+            entrance = locationDao.create(LocationType.ENTRANCE, 1);
+        }
+        return entrance;
     }
 
 }

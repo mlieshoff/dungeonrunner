@@ -18,44 +18,72 @@ package dungeonrunner.location;
  */
 
 import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.SqlRow;
+import dungeonrunner.player.DungeonRunner;
 import dungeonrunner.system.Inject;
 import dungeonrunner.system.dao.AbstractDao;
 import dungeonrunner.system.dao.DaoException;
-import dungeonrunner.system.dao.RowTransformer;
 import dungeonrunner.system.util.Lambda;
-
-import java.sql.SQLException;
 
 /**
  * @author Michael Lieshoff
  */
 public class LocationDao extends AbstractDao {
 
-    public static final String TABLE = "location";
-
     @Inject
     private EbeanServer ebeanServer;
 
-    public boolean exists(final LocationType locationType) throws DaoException {
-        return doInDao(new Lambda<Boolean>() {
+    public int count(final LocationType locationType) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<Integer>() {
             @Override
-            public Boolean exec(Object... params) throws SQLException {
-                return querySingle(ebeanServer, new RowTransformer<Boolean>() {
-                    @Override
-                    public Boolean transform(SqlRow sqlRow) throws SQLException {
-                        return sqlRow.getInteger("count(*)") > 0;
-                    }
-                }, "SELECT count(*) FROM " + TABLE + " where type = ?", locationType.getCode());
-            }});
+            public Integer exec(Object... params) throws Exception {
+                return ebeanServer
+                        .createQuery(Location.class)
+                        .where("type=:type")
+                        .setParameter("type", locationType.getCode())
+                        .findRowCount();
+            }
+        });
     }
 
-    public boolean create(final LocationType locationType, final int id) throws DaoException {
-        return doInDao(new Lambda<Boolean>() {
+    public Location find(final LocationType locationType, final int id) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<Location>() {
             @Override
-            public Boolean exec(Object... params) throws SQLException {
-                return update(ebeanServer, "insert into location (id, type) values(?, ?)", id, locationType.getCode()) == 1;
-            }});
+            public Location exec(Object... params) throws Exception {
+                return ebeanServer
+                        .createQuery(Location.class)
+                        .where("type=:type and id=:id")
+                        .setParameter("type", locationType.getCode())
+                        .setParameter("id", id)
+                        .findUnique();
+            }
+        });
+    }
+
+    public Location create(final LocationType locationType, final int id) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<Location>() {
+            @Override
+            public Location exec(Object... params) throws Exception {
+                Location location = new Location();
+                location.setType(locationType.getCode());
+                location.setId(id);
+                ebeanServer.insert(location);
+                return location;
+            }
+        });
+    }
+
+    public void assign(final DungeonRunner dungeonRunner, final Location location) throws DaoException {
+        doInDao(ebeanServer, new Lambda<Void>() {
+            @Override
+            public Void exec(Object... params) throws Exception {
+                PlayerLocation playerLocation = new PlayerLocation();
+                playerLocation.setType(location.getType());
+                playerLocation.setLocation(location.getId());
+                playerLocation.setPlayer(dungeonRunner.getUuid());
+                ebeanServer.insert(playerLocation);
+                return null;
+            }
+        });
     }
 
 }

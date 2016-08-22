@@ -1,6 +1,4 @@
-package dungeonrunner.entrance;
-
-/*
+package dungeonrunner.location;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,17 +15,33 @@ package dungeonrunner.entrance;
  * limitations under the License.
  */
 
-
-import dungeonrunner.observer.Ticket;
-import org.bukkit.entity.Player;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author Michael Lieshoff
  */
-public class EnterEntranceTicket extends Ticket {
+@Entity
+@Table(name = "dr_location")
+public class Location {
 
-    public EnterEntranceTicket(Player player) {
-        super(player);
+    private int id;
+    private int type;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
 }

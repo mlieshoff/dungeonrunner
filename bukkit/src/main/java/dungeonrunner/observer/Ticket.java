@@ -17,20 +17,21 @@ package dungeonrunner.observer;
  * limitations under the License.
  */
 
-import org.bukkit.entity.Player;
+import dungeonrunner.player.DungeonRunner;
 
 /**
  * @author Michael Lieshoff
  */
 public class Ticket {
 
-    private final Player player;
+    private final DungeonRunner dungeonRunner;
 
-    public Ticket(Player player) {
-        this.player = player;
+    public Ticket(DungeonRunner dungeonRunner) {
+        this.dungeonRunner = dungeonRunner;
     }
 
-    public Player getPlayer() {
-        return player;
+    public DungeonRunner getDungeonRunner() {
+        return dungeonRunner;
     }
+
 }

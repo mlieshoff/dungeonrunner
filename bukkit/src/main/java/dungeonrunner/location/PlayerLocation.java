@@ -1,6 +1,4 @@
-package dungeonrunner.entrance;
-
-/*
+package dungeonrunner.location;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,20 +15,43 @@ package dungeonrunner.entrance;
  * limitations under the License.
  */
 
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.location.LocationDao;
-import dungeonrunner.system.Inject;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author Michael Lieshoff
  */
-public class EntranceDao extends LocationDao {
+@Entity
+@Table(name = "dr_playerlocation")
+public class PlayerLocation {
 
-    public static final String TABLE = "entrance";
+    private int location;
+    private int type;
 
-    @Inject
-    private EbeanServer ebeanServer;
+    private String player;
 
+    public String getPlayer() {
+        return player;
+    }
 
+    public void setPlayer(String player) {
+        this.player = player;
+    }
+
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
 }
