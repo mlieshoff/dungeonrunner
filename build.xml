@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="dungeonrunner" default="release">
+
+    <target name="release">
+        <delete dir="tmp"/>
+        <mkdir dir="tmp"/>
+        <unzip src="bukkit/target/dungeonrunner-bukkit-1.0.0.jar" dest="tmp"/>
+        <unzip src="system/target/dungeonrunner-system-1.0.0.jar" dest="tmp"/>
+        <zip destfile="tmp/dungeonrunner-bukkit-1.0.0.jar" basedir="tmp" />
+        <copy file="tmp/dungeonrunner-bukkit-1.0.0.jar" todir="/home/micha/Spiele/bk/plugins" />
+    </target>
+
+</project>

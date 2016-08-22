@@ -1,0 +1,9 @@
+name: dungeonrunner
+version: 1.0.0
+description: 555
+author: CrazyCreeper
+authors: [carzycreeper]
+website:
+
+main: dungeonrunner.DrPlugin
+database: true
