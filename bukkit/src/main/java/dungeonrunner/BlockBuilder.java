@@ -1,4 +1,4 @@
-package dungeonrunner.system.dao;
+package dungeonrunner;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,22 +17,21 @@ package dungeonrunner.system.dao;
  * limitations under the License.
  */
 
-
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.util.Lambda;
+import dungeonrunner.model.Entrance;
+import dungeonrunner.model.PlayerContainer;
+import dungeonrunner.system.util.Log;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author Michael Lieshoff
  */
-public abstract class AbstractDao implements Dao {
+public class BlockBuilder {
 
-    public <T> T doInDao(EbeanServer ebeanServer, Lambda<T> lambda) throws DaoException {
-        try {
-            T t = lambda.exec();
-            return t;
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+    public void build(Plugin plugin, Entrance entrance) {
+    }
+
+    public void destroy(PlayerContainer playerContainer) {
+        Log.info(this, "destroy", "playerContainer=%s", playerContainer);
     }
 
 }

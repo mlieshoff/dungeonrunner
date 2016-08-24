@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.player;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,9 +17,27 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+import org.bukkit.entity.Player;
+
 /**
  * @author Michael Lieshoff
  */
-public class Vault {
+public class PlayerCharacter {
+
+    private final Player player;
+    private final Character character;
+
+    public PlayerCharacter(Player player, Character character) {
+        this.player = player;
+        this.character = character;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
 
 }

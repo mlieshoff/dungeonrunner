@@ -1,6 +1,4 @@
-package dungeonrunner.system.dao;
-
-/*
+package dungeonrunner.location;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,22 +15,25 @@ package dungeonrunner.system.dao;
  * limitations under the License.
  */
 
-
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.util.Lambda;
-
 /**
  * @author Michael Lieshoff
  */
-public abstract class AbstractDao implements Dao {
+public enum LogicalLocationType {
 
-    public <T> T doInDao(EbeanServer ebeanServer, Lambda<T> lambda) throws DaoException {
-        try {
-            T t = lambda.exec();
-            return t;
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+    ENTRANCE(1),
+    ARENA(2),
+    PLAYER_LOUNGE(3),
+    ADMIN_LOUNGE(4)
+    ;
+
+    private final int code;
+
+    LogicalLocationType(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
     }
 
 }

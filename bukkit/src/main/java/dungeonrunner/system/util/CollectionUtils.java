@@ -1,4 +1,4 @@
-package dungeonrunner.arena;
+package dungeonrunner.system.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,17 +17,24 @@ package dungeonrunner.arena;
  * limitations under the License.
  */
 
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.Inject;
-import dungeonrunner.system.dao.AbstractDao;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @author Michael Lieshoff
  */
-public class ArenaDao extends AbstractDao {
+public class CollectionUtils {
 
-    @Inject
-    private EbeanServer ebeanServer;
+    public static <T> Collection<T> subtract(Collection<T> a, Collection<T> b) {
+        Collection<T> tmp = new HashSet<>(a);
+        for (T t : b) {
+            tmp.remove(t);
+        }
+        return tmp;
+    }
 
+    public static <T> T first(Collection<T> a) {
+        return a.iterator().next();
+    }
 
 }

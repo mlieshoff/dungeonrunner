@@ -17,8 +17,10 @@ package dungeonrunner.player;
  * limitations under the License.
  */
 
-import dungeonrunner.system.Inject;
-import dungeonrunner.system.dao.DaoException;
+import dungeonrunner.system.di.Inject;
+import dungeonrunner.system.manager.AbstractManager;
+import dungeonrunner.system.manager.ManagerException;
+import dungeonrunner.system.util.Lambda;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -26,18 +28,23 @@ import java.util.UUID;
 /**
  * @author Michael Lieshoff
  */
-public class PlayerManager {
+public class CharacterManager extends AbstractManager {
 
     @Inject
-    private PlayerDao playerDao;
+    private CharacterDao _characterDao;
 
-    public DungeonRunner login(Player player) throws DaoException {
-        UUID uuid = player.getUniqueId();
-        DungeonRunner dungeonRunner = playerDao.find(uuid);
-        if (dungeonRunner == null) {
-            dungeonRunner = playerDao.register(player);
-        }
-        return dungeonRunner;
+    public Character login(final Player player) throws ManagerException {
+        return doInManager(new Lambda<Character>() {
+            @Override
+            public Character exec(Object... params) throws Exception {
+                UUID uuid = player.getUniqueId();
+                Character character = _characterDao.find(uuid);
+                if (character == null) {
+                    character = _characterDao.register(player);
+                }
+                return character;
+            }
+        });
     }
 
 }

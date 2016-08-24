@@ -19,21 +19,18 @@ package dungeonrunner;
 
 import com.avaje.ebean.EbeanServer;
 import dungeonrunner.arena.ArenaManager;
-import dungeonrunner.entrance.EntranceManager;
-import dungeonrunner.location.Location;
-import dungeonrunner.location.LocationDao;
-import dungeonrunner.location.PlayerLocation;
-import dungeonrunner.observer.Observer;
-import dungeonrunner.player.DungeonRunner;
-import dungeonrunner.player.PlayerDao;
-import dungeonrunner.player.PlayerManager;
-import dungeonrunner.system.MiniDI;
-import dungeonrunner.system.dao.DaoException;
+import dungeonrunner.model.World;
+import dungeonrunner.observer.Engine;
+import dungeonrunner.player.Character;
+import dungeonrunner.player.CharacterDao;
+import dungeonrunner.player.CharacterManager;
+import dungeonrunner.system.di.MiniDI;
+import dungeonrunner.system.transaction.TransactionContext;
 import dungeonrunner.system.util.Log;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -44,34 +41,33 @@ import java.util.List;
  */
 public class DrPlugin extends JavaPlugin implements Listener {
 
-    private Observer observer;
-
-    private PlayerManager playerManager;
-
-    private EntranceManager entranceManager;
+    private Engine engine;
 
     private static final List<Class<?>> DB_CLASSES = new ArrayList<Class<?>>(){{
-        add(DungeonRunner.class);
-        add(Location.class);
-        add(PlayerLocation.class);
+        add(Character.class);
     }};
 
     @Override
     public void onLoad() {
         super.onLoad();
         Log.init(this);
+        TransactionContext.init(getDatabase());
 
         MiniDI.register(EbeanServer.class, getDatabase());
         MiniDI.register(
                 ArenaManager.class,
-                EntranceManager.class,
-                LocationDao.class,
-                Observer.class,
-                PlayerDao.class,
-                PlayerManager.class
+                CharacterManager.class,
+                CharacterDao.class,
+                BlockBuilder.class,
+                Engine.class,
+                World.class
         );
 
-        installDDL();
+        try {
+            installDDL();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 /*        for (Class<?> clazz : DB_CLASSES) {
             try {
@@ -83,19 +79,7 @@ public class DrPlugin extends JavaPlugin implements Listener {
         }
         */
 
-        observer = MiniDI.get(Observer.class);
-        playerManager = MiniDI.get(PlayerManager.class);
-        entranceManager = MiniDI.get(EntranceManager.class);
-
-        try {
-            Location entrance = entranceManager.find();
-            if (entrance == null) {
-                entranceManager.create();
-            }
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
-
+        engine = MiniDI.get(Engine.class);
     }
 
     @Override
@@ -107,27 +91,23 @@ public class DrPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
-        observer.start();
+        engine.start();
     }
 
     @Override
     public void onDisable() {
-        observer.stop();
+        engine.stop();
         super.onDisable();
     }
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
-        Player player = event.getPlayer();
-        Log.info(this, "onLogin", "player=%s", player.getName());
+        engine.onLogin(event);
+    }
 
-        try {
-            DungeonRunner dungeonRunner = playerManager.login(player);
-            observer.enterEntrance(dungeonRunner);
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
-
+    @EventHandler
+    public void onLogout(PlayerQuitEvent event) {
+        engine.onLogout(event);
     }
 
 }

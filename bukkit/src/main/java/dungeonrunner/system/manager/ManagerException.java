@@ -1,4 +1,6 @@
-package dungeonrunner.location;/*
+package dungeonrunner.system.manager;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,19 +20,10 @@ package dungeonrunner.location;/*
 /**
  * @author Michael Lieshoff
  */
-public enum LocationType {
+public class ManagerException extends Exception {
 
-    ENTRANCE(1)
-    ;
-
-    private final int code;
-
-    LocationType(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
+    public ManagerException(Exception e) {
+        super(e);
     }
 
 }

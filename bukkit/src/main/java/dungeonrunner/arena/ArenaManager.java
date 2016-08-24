@@ -17,29 +17,17 @@ package dungeonrunner.arena;
  * limitations under the License.
  */
 
-import dungeonrunner.system.Inject;
-import org.bukkit.entity.Player;
+import dungeonrunner.model.Arena;
+import dungeonrunner.system.manager.AbstractManager;
 
 /**
  * @author Michael Lieshoff
  */
-public class ArenaManager {
+public class ArenaManager extends AbstractManager {
 
-    @Inject
-    private ArenaDao arenaDao;
-
-    public void enterArena(Player player) {
-        /*
-        try {
-            Integer id = arenaDao.findFreeArenaId();
-            if (id == null) {
-                id = arenaDao.createArena(0);
-            }
-            arenaDao.reserveFor(id, player);
-        } catch (NoFreeArenaFoundException e) {
-            // server full...
-        }
-        */
+    public Arena createArena(int id) {
+        Arena arena = new Arena(id);
+        return arena;
     }
 
 }

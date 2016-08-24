@@ -1,4 +1,4 @@
-package dungeonrunner.system.dao;
+package dungeonrunner.model;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,22 +17,13 @@ package dungeonrunner.system.dao;
  * limitations under the License.
  */
 
-
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.util.Lambda;
-
 /**
  * @author Michael Lieshoff
  */
-public abstract class AbstractDao implements Dao {
+public class Vault extends PlayerContainer {
 
-    public <T> T doInDao(EbeanServer ebeanServer, Lambda<T> lambda) throws DaoException {
-        try {
-            T t = lambda.exec();
-            return t;
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+
+    public Vault(int id) {
+        super(id);
     }
-
 }

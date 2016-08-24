@@ -1,4 +1,6 @@
-package dungeonrunner.location;/*
+package dungeonrunner.model;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,43 +17,35 @@ package dungeonrunner.location;/*
  * limitations under the License.
  */
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * @author Michael Lieshoff
  */
-@Entity
-@Table(name = "dr_playerlocation")
-public class PlayerLocation {
+public class FreeObject<T> {
 
-    private int location;
-    private int type;
+    private final T object;
+    private final int id;
+    private final boolean mustCreate;
 
-    private String player;
-
-    public String getPlayer() {
-        return player;
+    public FreeObject(int id) {
+        this(null, id);
     }
 
-    public void setPlayer(String player) {
-        this.player = player;
+    public FreeObject(T object, int id) {
+        this.object = object;
+        this.id = id;
+        mustCreate = object == null;
     }
 
-    public int getLocation() {
-        return location;
+    public T getObject() {
+        return object;
     }
 
-    public void setLocation(int location) {
-        this.location = location;
+    public int getId() {
+        return id;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
+    public boolean isMustCreate() {
+        return mustCreate;
     }
 
 }

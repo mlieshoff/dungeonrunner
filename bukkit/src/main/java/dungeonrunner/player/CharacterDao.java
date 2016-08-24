@@ -18,7 +18,7 @@ package dungeonrunner.player;
  */
 
 import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.Inject;
+import dungeonrunner.system.di.Inject;
 import dungeonrunner.system.dao.AbstractDao;
 import dungeonrunner.system.dao.DaoException;
 import dungeonrunner.system.util.Lambda;
@@ -29,17 +29,17 @@ import java.util.UUID;
 /**
  * @author Michael Lieshoff
  */
-public class PlayerDao extends AbstractDao {
+public class CharacterDao extends AbstractDao {
 
     @Inject
     private EbeanServer ebeanServer;
 
-    public DungeonRunner find(final UUID uuid) throws DaoException {
-        return doInDao(ebeanServer, new Lambda<DungeonRunner>() {
+    public Character find(final UUID uuid) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<Character>() {
             @Override
-            public DungeonRunner exec(Object... params) throws Exception {
+            public Character exec(Object... params) throws Exception {
                 return ebeanServer
-                        .createQuery(DungeonRunner.class)
+                        .createQuery(Character.class)
                         .where("uuid=:uuid")
                         .setParameter("uuid", uuid.toString())
                         .findUnique();
@@ -47,14 +47,14 @@ public class PlayerDao extends AbstractDao {
         });
     }
 
-    public DungeonRunner register(final Player player) throws DaoException {
-        return doInDao(ebeanServer, new Lambda<DungeonRunner>() {
+    public Character register(final Player player) throws DaoException {
+        return doInDao(ebeanServer, new Lambda<Character>() {
             @Override
-            public DungeonRunner exec(Object... params) throws Exception {
-                DungeonRunner dungeonRunner = new DungeonRunner();
-                dungeonRunner.setUuid(player.getUniqueId().toString());
-                ebeanServer.save(dungeonRunner);
-                return dungeonRunner;
+            public Character exec(Object... params) throws Exception {
+                Character character = new Character();
+                character.setUuid(player.getUniqueId().toString());
+                ebeanServer.save(character);
+                return character;
             }
         });
     }

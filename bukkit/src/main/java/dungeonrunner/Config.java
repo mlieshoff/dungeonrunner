@@ -22,6 +22,8 @@ package dungeonrunner;
  */
 public class Config {
 
-    private static final int MAX_ARENAS = 4;
+    public static final int MAX_ARENAS = 1;
+    public static final int MAX_PLAYER_LOUNGES_PER_ARENA = 4;
+    public static final int MAX_ADMIN_LOUNGES_PER_ARENA = 1;
 
 }

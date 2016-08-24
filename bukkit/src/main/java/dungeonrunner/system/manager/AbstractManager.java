@@ -1,4 +1,4 @@
-package dungeonrunner.arena;
+package dungeonrunner.system.manager;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,22 +17,27 @@ package dungeonrunner.arena;
  * limitations under the License.
  */
 
-import dungeonrunner.Dungeon;
-import dungeonrunner.Lounge;
-import dungeonrunner.Vault;
 
-import java.util.ArrayList;
-import java.util.List;
+import dungeonrunner.system.transaction.TransactionContext;
+import dungeonrunner.system.util.Lambda;
 
 /**
  * @author Michael Lieshoff
  */
-public class Arena {
+public abstract class AbstractManager implements Manager {
 
-    private List<Dungeon> dungeons = new ArrayList<>();
-
-    private List<Lounge> lounges = new ArrayList<>();
-
-    private List<Vault> vaults = new ArrayList<>();
+    public <T> T doInManager(Lambda<T> lambda) throws ManagerException {
+        try {
+            TransactionContext.joinOrCreate();
+            T t = lambda.exec();
+            TransactionContext.commit();
+            return t;
+        } catch (Exception e) {
+            TransactionContext.rollback();
+            throw new ManagerException(e);
+        } finally {
+            TransactionContext.release();
+        }
+    }
 
 }

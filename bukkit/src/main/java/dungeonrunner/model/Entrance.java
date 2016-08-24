@@ -1,4 +1,4 @@
-package dungeonrunner.observer;
+package dungeonrunner.model;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,16 +17,20 @@ package dungeonrunner.observer;
  * limitations under the License.
  */
 
-
-import dungeonrunner.player.DungeonRunner;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author Michael Lieshoff
  */
-public class EnterArenaTicket extends Ticket {
+public class Entrance extends PlayerContainer {
 
-    public EnterArenaTicket(DungeonRunner dungeonRunner) {
-        super(dungeonRunner);
+    public Entrance() {
+        super(1);
+    }
+
+    public Set<PlayerContainer> destroy() {
+        return Collections.emptySet();
     }
 
 }

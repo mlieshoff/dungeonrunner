@@ -1,4 +1,4 @@
-package dungeonrunner.system.dao;
+package dungeonrunner.observer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,21 +18,23 @@ package dungeonrunner.system.dao;
  */
 
 
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.system.util.Lambda;
+import dungeonrunner.location.LogicalLocationType;
+import dungeonrunner.player.PlayerCharacter;
 
 /**
  * @author Michael Lieshoff
  */
-public abstract class AbstractDao implements Dao {
+public class EnterTicket extends Ticket {
 
-    public <T> T doInDao(EbeanServer ebeanServer, Lambda<T> lambda) throws DaoException {
-        try {
-            T t = lambda.exec();
-            return t;
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+    private LogicalLocationType logicalLocationType;
+
+    public EnterTicket(PlayerCharacter playerCharacter, LogicalLocationType logicalLocationType) {
+        super(playerCharacter);
+        this.logicalLocationType = logicalLocationType;
+    }
+
+    public LogicalLocationType getLogicalLocationType() {
+        return logicalLocationType;
     }
 
 }

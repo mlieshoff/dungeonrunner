@@ -1,4 +1,4 @@
-package dungeonrunner.system;
+package dungeonrunner.system.di;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more

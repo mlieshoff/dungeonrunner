@@ -1,4 +1,6 @@
-package dungeonrunner.location;/*
+package dungeonrunner.model;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,33 +17,13 @@ package dungeonrunner.location;/*
  * limitations under the License.
  */
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * @author Michael Lieshoff
  */
-@Entity
-@Table(name = "dr_location")
-public class Location {
+public class Dungeon extends PlayerContainer {
 
-    private int id;
-    private int type;
 
-    public int getId() {
-        return id;
+    public Dungeon(int id) {
+        super(id);
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
 }

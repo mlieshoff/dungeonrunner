@@ -1,4 +1,6 @@
-package dungeonrunner.player;/*
+package dungeonrunner.model;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,24 +17,16 @@ package dungeonrunner.player;/*
  * limitations under the License.
  */
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * @author Michael Lieshoff
  */
-@Entity
-@Table(name = "dr_dungeonrunner")
-public class DungeonRunner {
+public class Lounge extends PlayerContainer {
 
-    private String uuid;
+    private final Arena arena;
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public Lounge(Arena arena, int id) {
+        super(id);
+        this.arena = arena;
     }
 
 }

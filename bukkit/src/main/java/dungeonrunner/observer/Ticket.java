@@ -17,21 +17,21 @@ package dungeonrunner.observer;
  * limitations under the License.
  */
 
-import dungeonrunner.player.DungeonRunner;
+import dungeonrunner.player.PlayerCharacter;
 
 /**
  * @author Michael Lieshoff
  */
 public class Ticket {
 
-    private final DungeonRunner dungeonRunner;
+    private final PlayerCharacter playerCharacter;
 
-    public Ticket(DungeonRunner dungeonRunner) {
-        this.dungeonRunner = dungeonRunner;
+    public Ticket(PlayerCharacter playerCharacter) {
+        this.playerCharacter = playerCharacter;
     }
 
-    public DungeonRunner getDungeonRunner() {
-        return dungeonRunner;
+    public PlayerCharacter getPlayerCharacter() {
+        return playerCharacter;
     }
 
 }

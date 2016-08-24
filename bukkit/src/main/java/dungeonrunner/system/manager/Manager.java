@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.system.manager;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,6 +20,6 @@ package dungeonrunner;
 /**
  * @author Michael Lieshoff
  */
-public class Lounge {
+public interface Manager {
 
 }
