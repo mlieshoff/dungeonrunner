@@ -20,6 +20,10 @@ package dungeonrunner;
 import dungeonrunner.model.Entrance;
 import dungeonrunner.model.PlayerContainer;
 import dungeonrunner.system.util.Log;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -27,11 +31,28 @@ import org.bukkit.plugin.Plugin;
  */
 public class BlockBuilder {
 
-    public void build(Plugin plugin, Entrance entrance) {
+    public void buildEntrance(Plugin plugin, Entrance entrance) {
     }
 
     public void destroy(PlayerContainer playerContainer) {
         Log.info(this, "destroy", "playerContainer=%s", playerContainer);
+    }
+
+    public void reset(Plugin plugin) {
+        Log.info(this, "reset", "starting... plugin=%s", plugin);
+        World world = plugin.getServer().getWorld("world");
+
+        for (int x = 0; x < 100; x ++) {
+            for (int y = 0; y < 100; y ++) {
+                for (int z = 0; z < 100; z++) {
+                    Location location = new Location(world, x, y, z);
+                    Block block = location.getBlock();
+                    block.setType(Material.WATER);
+                }
+            }
+        }
+
+        Log.info(this, "reset", "stop");
     }
 
 }

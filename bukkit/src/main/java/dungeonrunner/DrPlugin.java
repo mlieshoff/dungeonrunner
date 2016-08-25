@@ -18,7 +18,6 @@ package dungeonrunner;
  */
 
 import com.avaje.ebean.EbeanServer;
-import dungeonrunner.arena.ArenaManager;
 import dungeonrunner.model.World;
 import dungeonrunner.observer.Engine;
 import dungeonrunner.player.Character;
@@ -55,7 +54,6 @@ public class DrPlugin extends JavaPlugin implements Listener {
 
         MiniDI.register(EbeanServer.class, getDatabase());
         MiniDI.register(
-                ArenaManager.class,
                 CharacterManager.class,
                 CharacterDao.class,
                 BlockBuilder.class,
@@ -63,23 +61,10 @@ public class DrPlugin extends JavaPlugin implements Listener {
                 World.class
         );
 
-        try {
-            installDDL();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-/*        for (Class<?> clazz : DB_CLASSES) {
-            try {
-                getDatabase().find(clazz);
-            } catch (PersistenceException e) {
-                installDDL();
-                break;
-            }
-        }
-        */
+        installDDL();
 
         engine = MiniDI.get(Engine.class);
+        engine.setPlugin(this);
     }
 
     @Override
