@@ -22,7 +22,6 @@ import dungeonrunner.player.PlayerCharacter;
 import dungeonrunner.system.util.Log;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,6 +79,14 @@ public class World extends PlayerContainer {
         addToTargetLocation(playerCharacter, adminLounge);
     }
 
+    public void enterVault(PlayerCharacter playerCharacter, Vault vault) {
+        addToTargetLocation(playerCharacter, vault);
+    }
+
+    public void enterDungeon(PlayerCharacter playerCharacter, Dungeon dungeon) {
+        addToTargetLocation(playerCharacter, dungeon);
+    }
+
     public void setEntrance(Entrance entrance) {
         this.entrance = entrance;
     }
@@ -106,27 +113,28 @@ public class World extends PlayerContainer {
         return uuid2Characters.get(player.getUniqueId().toString());
     }
 
-    public Set<PlayerContainer> cleanUp() {
-        Log.info(this, "cleanUp", "number of arenas: %s", arenas.size());
-        Set<PlayerContainer> set = new HashSet<>();
-        Set<Arena> arenasToDestroy = new HashSet<>();
-        for (Map.Entry<Integer, Arena> entry : arenas.entrySet()) {
-            Arena arena = entry.getValue();
-            if (arena.count() == 0) {
-                Set<PlayerContainer> containerToDestroy = arena.destroy();
-                if (containerToDestroy.size() > 0){
-                    set.addAll(containerToDestroy);
+    public Set<PlayerContainer> destroy() {
+        Set<PlayerContainer> set = super.destroy();
+
+        for (PlayerContainer playerContainer : arenas.values()) {
+            if (playerContainer.isEmpty()) {
+                Set<PlayerContainer> subContainers = playerContainer.destroy();
+                if (subContainers.size() > 0) {
+                    set.addAll(subContainers);
                 }
-                if (arena.isEmpty()) {
-                    arenasToDestroy.add(arena);
-                }
-            } else {
-                Log.info(this, "cleanUp", "arena has %s players", arena.count());
             }
         }
-        for (Arena arena : arenasToDestroy) {
-            arenas.remove(arena.getId());
+
+        for (PlayerContainer playerContainer : set) {
+            if (playerContainer instanceof Arena) {
+                arenas.remove(playerContainer.getId());
+            }
         }
+
+        if (arenas.size() == 0) {
+//            set.add(this);
+        }
+
         return set;
     }
 

@@ -17,13 +17,27 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
+import java.util.Set;
+
 /**
  * @author Michael Lieshoff
  */
 public class Dungeon extends PlayerContainer {
 
+    private final Vault vault;
 
-    public Dungeon(int id) {
+    public Dungeon(Vault vault, int id) {
         super(id);
+        this.vault = vault;
     }
+
+    @Override
+    public Set<PlayerContainer> destroy() {
+        Set<PlayerContainer> set = super.destroy();
+        if (count() == 0) {
+            set.add(this);
+        }
+        return set;
+    }
+
 }

@@ -17,6 +17,8 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
+import java.util.Set;
+
 /**
  * @author Michael Lieshoff
  */
@@ -27,6 +29,15 @@ public class Lounge extends PlayerContainer {
     public Lounge(Arena arena, int id) {
         super(id);
         this.arena = arena;
+    }
+
+    @Override
+    public Set<PlayerContainer> destroy() {
+        Set<PlayerContainer> set = super.destroy();
+        if (count() == 0) {
+            set.add(this);
+        }
+        return set;
     }
 
 }

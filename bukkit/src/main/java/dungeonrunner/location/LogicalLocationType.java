@@ -23,7 +23,9 @@ public enum LogicalLocationType {
     ENTRANCE(1),
     ARENA(2),
     PLAYER_LOUNGE(3),
-    ADMIN_LOUNGE(4)
+    ADMIN_LOUNGE(4),
+    VAULT(5),
+    DUNGEON(5)
     ;
 
     private final int code;

@@ -93,7 +93,12 @@ public class PlayerContainer {
     }
 
     public Set<PlayerContainer> destroy() {
-        return new HashSet<>();
+        Set<PlayerContainer> set = new HashSet<>();
+        return set;
+    }
+
+    public boolean isEmpty() {
+        return count.get() == 0;
     }
 
     @Override

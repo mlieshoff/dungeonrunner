@@ -18,6 +18,7 @@ package dungeonrunner.model;
  */
 
 import dungeonrunner.Config;
+import dungeonrunner.system.util.Log;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class Arena extends PlayerContainer {
 
     private Map<Integer, Lounge> adminLounges = new ConcurrentHashMap<>();
     private Map<Integer, Lounge> playerLounges = new ConcurrentHashMap<>();
-    private Map<Integer, Dungeon> dungeons = new ConcurrentHashMap<>();
     private Map<Integer, Vault> vaults = new ConcurrentHashMap<>();
 
     public Arena(int id) {
@@ -39,15 +39,21 @@ public class Arena extends PlayerContainer {
     }
 
     public Lounge createPlayerLounge(int id) {
-        Lounge lounge = new Lounge(this, id);
+        Lounge lounge = new PlayerLounge(this, id);
         playerLounges.put(id, lounge);
         return lounge;
     }
 
     public Lounge createAdminLounge(int id) {
-        Lounge lounge = new Lounge(this, id);
+        Lounge lounge = new AdminLounge(this, id);
         adminLounges.put(id, lounge);
         return lounge;
+    }
+
+    public Vault createVault(int id) {
+        Vault vault = new Vault(this, id);
+        vaults.put(id, vault);
+        return vault;
     }
 
     public FreeObject<Lounge> findFreePlayerLounge() {
@@ -58,48 +64,44 @@ public class Arena extends PlayerContainer {
         return findFree(Config.MAX_ADMIN_LOUNGES_PER_ARENA, playerLounges);
     }
 
+    public FreeObject<Vault> findFreeVault() {
+        return findFree(Config.MAX_VAULTS_PER_ARENA, vaults);
+    }
+
     public Set<PlayerContainer> destroy() {
-        Set<PlayerContainer> set = new HashSet<>();
-        add(set, removeAndDestroy(getContainersToDestroy(adminLounges), adminLounges));
-        add(set, removeAndDestroy(getContainersToDestroy(playerLounges), playerLounges));
-        add(set, removeAndDestroy(getContainersToDestroy(dungeons), dungeons));
-        add(set, removeAndDestroy(getContainersToDestroy(vaults), vaults));
-        if (isEmpty()) {
-            set.add(this);
-        }
-        return set;
-    }
+        Set<PlayerContainer> set = super.destroy();
+        Set<PlayerContainer> containers = new HashSet<>();
 
-    private void add(Set<PlayerContainer> set, Set<PlayerContainer> containers) {
-        if (containers.size() > 0) {
-            set.addAll(containers);
-        }
-    }
+        containers.addAll(adminLounges.values());
+        containers.addAll(playerLounges.values());
+        containers.addAll(vaults.values());
 
-    private Set<PlayerContainer> getContainersToDestroy(Map<Integer, ? extends PlayerContainer> containers) {
-        Set<PlayerContainer> set = new HashSet<>();
-        for (Map.Entry<Integer, ? extends PlayerContainer> entry : containers.entrySet()) {
-            PlayerContainer t = entry.getValue();
-            if (t.count() == 0) {
-                set.add(t);
+        for (PlayerContainer playerContainer : containers) {
+            Log.info(this, "destroy", "check: %s", playerContainer);
+            if (playerContainer.isEmpty()) {
+                Set<PlayerContainer> subContainers = playerContainer.destroy();
+                Log.info(this, "destroy", "    subcontainers: %s", subContainers);
+                if (subContainers.size() > 0) {
+                    set.addAll(subContainers);
+                }
             }
         }
-        return set;
-    }
 
-    private Set<PlayerContainer> removeAndDestroy(Set<PlayerContainer> set, Map<Integer, ? extends PlayerContainer> containers) {
-        for (PlayerContainer t : set) {
-            containers.remove(t.getId());
-            t.destroy();
+        for (PlayerContainer playerContainer : set) {
+            if (playerContainer instanceof AdminLounge) {
+                adminLounges.remove(playerContainer.getId());
+            } else if (playerContainer instanceof PlayerLounge) {
+                playerLounges.remove(playerContainer.getId());
+            } else if (playerContainer instanceof Vault) {
+                vaults.remove(playerContainer.getId());
+            }
         }
-        return set;
-    }
 
-    public boolean isEmpty() {
-        return adminLounges.size() == 0
-                && playerLounges.size() == 0
-                && dungeons.size() == 0
-                && vaults.size() == 0;
+        if (adminLounges.size() == 0 && playerLounges.size() == 0 && vaults.size() == 0) {
+            set.add(this);
+        }
+
+        return set;
     }
 
 }

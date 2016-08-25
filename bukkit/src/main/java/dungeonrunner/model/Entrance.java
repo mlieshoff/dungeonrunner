@@ -17,7 +17,6 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -29,8 +28,13 @@ public class Entrance extends PlayerContainer {
         super(1);
     }
 
+    @Override
     public Set<PlayerContainer> destroy() {
-        return Collections.emptySet();
+        Set<PlayerContainer> set = super.destroy();
+        if (count() == 0) {
+            set.add(this);
+        }
+        return set;
     }
 
 }

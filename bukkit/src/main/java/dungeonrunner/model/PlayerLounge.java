@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.model;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,14 +20,10 @@ package dungeonrunner;
 /**
  * @author Michael Lieshoff
  */
-public class Config {
+public class PlayerLounge extends Lounge {
 
-    public static final long CLEAN_TIMEOUT = 5000;
-
-    public static final int MAX_ARENAS = 1;
-    public static final int MAX_PLAYER_LOUNGES_PER_ARENA = 4;
-    public static final int MAX_ADMIN_LOUNGES_PER_ARENA = 1;
-    public static final int MAX_VAULTS_PER_ARENA = 4;
-    public static final int MAX_DUNGEONS_PER_VAULT = 4;
+    public PlayerLounge(Arena arena, int id) {
+        super(arena, id);
+    }
 
 }

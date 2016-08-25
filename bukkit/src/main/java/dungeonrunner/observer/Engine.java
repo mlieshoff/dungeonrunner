@@ -18,12 +18,15 @@ package dungeonrunner.observer;
  */
 
 import dungeonrunner.BlockBuilder;
+import dungeonrunner.Config;
 import dungeonrunner.location.LogicalLocationType;
 import dungeonrunner.model.Arena;
+import dungeonrunner.model.Dungeon;
 import dungeonrunner.model.Entrance;
 import dungeonrunner.model.FreeObject;
 import dungeonrunner.model.Lounge;
 import dungeonrunner.model.PlayerContainer;
+import dungeonrunner.model.Vault;
 import dungeonrunner.model.World;
 import dungeonrunner.player.Character;
 import dungeonrunner.player.CharacterManager;
@@ -37,6 +40,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.Set;
 
 import static dungeonrunner.location.LogicalLocationType.PLAYER_LOUNGE;
 
@@ -59,8 +63,11 @@ public class Engine {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            long lastClean = 0;
             while(!running) {
                 Log.info(this, "run", "checking...");
+
+                long now = System.currentTimeMillis();
 
                 Ticket ticket = tickets.poll();
                 while(ticket != null) {
@@ -68,7 +75,10 @@ public class Engine {
                     ticket = tickets.poll();
                 }
 
-                cleanUp();
+                if (now > lastClean + Config.CLEAN_TIMEOUT) {
+                    lastClean = now;
+                    cleanUp();
+                }
 
                 try {
                     Thread.sleep(1000);
@@ -90,6 +100,8 @@ public class Engine {
         Character character = playerCharacter.getCharacter();
         if (ticket instanceof EnterTicket) {
             EnterTicket enterTicket = (EnterTicket) ticket;
+            FreeObject<Vault> vaultFreeObject;
+            Vault vault;
             Log.info(this, "processTicket", "enter: %s, player: %s", ticket.getClass().getSimpleName(), character.getUuid());
             switch (enterTicket.getLogicalLocationType()) {
                 case ARENA:
@@ -117,14 +129,44 @@ public class Engine {
                     world.enterAdminLounge(playerCharacter, adminLounge);
                     onEnterAdminLounge(playerCharacter, adminLounge);
                     break;
+                case VAULT:
+                    arena = findArena();
+                    vaultFreeObject = arena.findFreeVault();
+                    vault = vaultFreeObject.getObject();
+                    if (vaultFreeObject.isMustCreate()) {
+                        vault = arena.createVault(vaultFreeObject.getId());
+                    }
+                    world.enterVault(playerCharacter, vault);
+                    onEnterVault(playerCharacter, vault);
+                    break;
+                case DUNGEON:
+                    arena = findArena();
+                    vaultFreeObject = arena.findFreeVault();
+                    vault = vaultFreeObject.getObject();
+                    if (vaultFreeObject.isMustCreate()) {
+                        vault = arena.createVault(vaultFreeObject.getId());
+                    }
+                    FreeObject<Dungeon> dungeonFreeObject = vault.findFreeDungeon();
+                    Dungeon dungeon = dungeonFreeObject.getObject();
+                    if (dungeonFreeObject.isMustCreate()) {
+                        dungeon = vault.createDungeon(dungeonFreeObject.getId());
+                    }
+                    world.enterDungeon(playerCharacter, dungeon);
+                    onEnterDungeon(playerCharacter, dungeon);
+                    break;
             }
         }
     }
 
     private void cleanUp() {
-        for (PlayerContainer playerContainer : world.cleanUp()) {
+        Log.info(this, "cleanUp", "starting...");
+        Set<PlayerContainer> cleanUpContainers = world.destroy();
+        Log.info(this, "cleanUp", "    * number of containers to clean: %s", cleanUpContainers.size());
+        for (PlayerContainer playerContainer : cleanUpContainers) {
+            Log.info(this, "cleanUp", "        * clean: %s", playerContainer);
             blockBuilder.destroy(playerContainer);
         }
+        Log.info(this, "cleanUp", "stop");
     }
 
     public Arena findArena() {
@@ -179,6 +221,16 @@ public class Engine {
 
     public void onEnterAdminLounge(PlayerCharacter playerCharacter, Lounge adminLounge) {
         Log.info(this, "onEnterAdminLounge", "player=%s", playerCharacter.getPlayer().getName());
+        //
+    }
+
+    public void onEnterVault(PlayerCharacter playerCharacter, Vault vault) {
+        Log.info(this, "onEnterVault", "player=%s", playerCharacter.getPlayer().getName());
+        //
+    }
+
+    public void onEnterDungeon(PlayerCharacter playerCharacter, Dungeon dungeon) {
+        Log.info(this, "onEnterDungeon", "player=%s", playerCharacter.getPlayer().getName());
         //
     }
 
