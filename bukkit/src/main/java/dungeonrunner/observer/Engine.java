@@ -170,7 +170,7 @@ public class Engine {
         FreeObject<Arena> arenaFreeObject = world.findFreeArena();
         Arena arena = arenaFreeObject.getObject();
         if (arenaFreeObject.isMustCreate()) {
-            arena = createArena(arenaFreeObject.getId());
+            arena = createArena(world, arenaFreeObject.getId());
         }
         return arena;
     }
@@ -179,7 +179,7 @@ public class Engine {
         if (!running) {
             Log.info(this, "start", "starting...");
             blockBuilder.reset(plugin);
-            world.setEntrance(new Entrance());
+            world.setEntrance(new Entrance(world));
             blockBuilder.buildEntrance(plugin, world.getEntrance());
             thread.start();
         }
@@ -192,8 +192,8 @@ public class Engine {
         }
     }
 
-    private Arena createArena(int id) {
-        Arena arena = new Arena(id);
+    private Arena createArena(World world, int id) {
+        Arena arena = new Arena(world, id);
         return arena;
     }
 

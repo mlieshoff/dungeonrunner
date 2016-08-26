@@ -40,4 +40,8 @@ public class Dungeon extends PlayerContainer {
         return set;
     }
 
+    public Vault getVault() {
+        return vault;
+    }
+
 }

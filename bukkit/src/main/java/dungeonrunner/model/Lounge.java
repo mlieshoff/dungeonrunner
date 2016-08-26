@@ -40,4 +40,8 @@ public class Lounge extends PlayerContainer {
         return set;
     }
 
+    public Arena getArena() {
+        return arena;
+    }
+
 }

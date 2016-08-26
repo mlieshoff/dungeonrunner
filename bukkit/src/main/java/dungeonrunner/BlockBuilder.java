@@ -32,6 +32,42 @@ import org.bukkit.plugin.Plugin;
 public class BlockBuilder {
 
     public void buildEntrance(Plugin plugin, Entrance entrance) {
+        buildGround(plugin, 48, 200, 48, 40, 1, Material.STONE);
+    }
+
+    public void buildGround(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
+        World world = plugin.getServer().getWorld("world");
+        for (int y = y0; y < y0 + height; y++) {
+            for (int x = x0; x < x0 + width; x++) {
+                for (int z = z0; z < z0 + width; z++) {
+                    Location location = new Location(world, x, y, z);
+                    Block block = location.getBlock();
+                    block.setType(material);
+                }
+            }
+        }
+    }
+
+    public void buildWallWestOst(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
+        World world = plugin.getServer().getWorld("world");
+        for (int y = y0; y < y0 + height; y++) {
+            for (int z = z0; z < z0 + width; z++) {
+                Location location = new Location(world, x0, y, z);
+                Block block = location.getBlock();
+                block.setType(material);
+            }
+        }
+    }
+
+    public void buildWallNorthSouth(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
+        World world = plugin.getServer().getWorld("world");
+        for (int y = y0; y < y0 + height; y++) {
+            for (int x = x0; x < x0 + width; x++) {
+                Location location = new Location(world, x0, y, z0);
+                Block block = location.getBlock();
+                block.setType(material);
+            }
+        }
     }
 
     public void destroy(PlayerContainer playerContainer) {
@@ -42,12 +78,12 @@ public class BlockBuilder {
         Log.info(this, "reset", "starting... plugin=%s", plugin);
         World world = plugin.getServer().getWorld("world");
 
-        for (int x = 0; x < 100; x ++) {
-            for (int y = 0; y < 100; y ++) {
-                for (int z = 0; z < 100; z++) {
+        for (int y = -64; y < 319; y ++) {
+            for (int x = -100; x < 100; x++) {
+                for (int z = -100; z < 100; z++) {
                     Location location = new Location(world, x, y, z);
                     Block block = location.getBlock();
-                    block.setType(Material.WATER);
+                    block.setType(Material.AIR);
                 }
             }
         }

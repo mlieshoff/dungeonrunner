@@ -30,12 +30,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Arena extends PlayerContainer {
 
-    private Map<Integer, Lounge> adminLounges = new ConcurrentHashMap<>();
-    private Map<Integer, Lounge> playerLounges = new ConcurrentHashMap<>();
-    private Map<Integer, Vault> vaults = new ConcurrentHashMap<>();
+    private final World world;
 
-    public Arena(int id) {
+    private final Map<Integer, Lounge> adminLounges = new ConcurrentHashMap<>();
+    private final Map<Integer, Lounge> playerLounges = new ConcurrentHashMap<>();
+    private final Map<Integer, Vault> vaults = new ConcurrentHashMap<>();
+
+    public Arena(World world, int id) {
         super(id);
+        this.world = world;
     }
 
     public Lounge createPlayerLounge(int id) {
@@ -102,6 +105,10 @@ public class Arena extends PlayerContainer {
         }
 
         return set;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
 }

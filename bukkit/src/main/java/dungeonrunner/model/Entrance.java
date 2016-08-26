@@ -24,8 +24,11 @@ import java.util.Set;
  */
 public class Entrance extends PlayerContainer {
 
-    public Entrance() {
+    private final World world;
+
+    public Entrance(World world) {
         super(1);
+        this.world = world;
     }
 
     @Override
@@ -35,6 +38,10 @@ public class Entrance extends PlayerContainer {
             set.add(this);
         }
         return set;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
 }

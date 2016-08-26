@@ -72,4 +72,8 @@ public class Vault extends PlayerContainer {
         return set;
     }
 
+    public Arena getArena() {
+        return arena;
+    }
+
 }
