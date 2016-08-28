@@ -19,6 +19,7 @@ package dungeonrunner.observer;
 
 import dungeonrunner.BlockBuilder;
 import dungeonrunner.Config;
+import dungeonrunner.Teleporter;
 import dungeonrunner.location.LogicalLocationType;
 import dungeonrunner.model.*;
 import dungeonrunner.player.Character;
@@ -27,7 +28,6 @@ import dungeonrunner.player.PlayerCharacter;
 import dungeonrunner.system.di.Inject;
 import dungeonrunner.system.manager.ManagerException;
 import dungeonrunner.system.util.Log;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -54,6 +54,9 @@ public class Engine {
 
     @Inject
     private BlockBuilder blockBuilder;
+
+    @Inject
+    private Teleporter teleporter;
 
     private Plugin plugin;
 
@@ -180,7 +183,7 @@ public class Engine {
             Log.info(this, "start", "starting...");
             blockBuilder.reset(plugin);
             world.setEntrance(new Entrance(world));
-            blockBuilder.buildEntrance(plugin, world.getEntrance());
+            blockBuilder.buildEntrance(world.getEntrance());
             thread.start();
         }
     }
@@ -200,26 +203,19 @@ public class Engine {
     public void onEnterEntrance(PlayerCharacter playerCharacter, Entrance entrance) {
         Log.info(this, "onEnterEntrance", "player=%s", playerCharacter.getPlayer().getName());
         tickets.add(new EnterTicket(playerCharacter, LogicalLocationType.ARENA));
+        Player player = playerCharacter.getPlayer();
+        teleporter.teleportPlayerToEntrance(player);
     }
 
     public void onEnterArena(PlayerCharacter playerCharacter, Arena arena) {
         Log.info(this, "onEnterArena", "player=%s", playerCharacter.getPlayer().getName());
+        blockBuilder.buildArena(arena);
         tickets.add(new EnterTicket(playerCharacter, PLAYER_LOUNGE));
     }
 
     public void onEnterPlayerLounge(PlayerCharacter playerCharacter, Lounge playerLounge) {
         Log.info(this, "onEnterPlayerLounge", "player=%s", playerCharacter.getPlayer().getName());
-        //
         playerCharacter.getPlayer().sendMessage(String.format("Welcome to the player lounge '%s' with %s players.", playerLounge.getId(), playerLounge.count()));
-
-
-        Player player = playerCharacter.getPlayer();
-        org.bukkit.World world = plugin.getServer().getWorld("world");
-        Location start = new Location(world, 1, -300, 1);
-        Log.info(this, "onLogin", "teleport player=%s to %s", player.getName(), start);
-//        player.teleport(start);
-        Log.info(this, "onLogin", "coordinates %s of player=%s", player.getLocation(), player.getName());
-
     }
 
     public void onEnterAdminLounge(PlayerCharacter playerCharacter, Lounge adminLounge) {

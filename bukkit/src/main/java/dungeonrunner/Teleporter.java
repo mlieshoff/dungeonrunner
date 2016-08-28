@@ -17,19 +17,25 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+import dungeonrunner.system.util.Log;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 /**
  * @author Michael Lieshoff
  */
-public class Config {
+public class Teleporter {
 
-    public static final long CLEAN_TIMEOUT = 5000;
+    private World world;
 
-    public static final int MAX_ARENAS = 1;
-    public static final int MAX_PLAYER_LOUNGES_PER_ARENA = 4;
-    public static final int MAX_ADMIN_LOUNGES_PER_ARENA = 1;
-    public static final int MAX_VAULTS_PER_ARENA = 4;
-    public static final int MAX_DUNGEONS_PER_VAULT = 4;
+    public void teleportPlayerToEntrance(Player player) {
+        Log.info(this, "teleportPlayerToEntrance", "teleport to: ");
+        player.teleport(new Location(world, 58, 201, 58));
+    }
 
-
+    public void setWorld(World world) {
+        this.world = world;
+    }
 
 }

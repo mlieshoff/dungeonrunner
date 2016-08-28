@@ -1,6 +1,4 @@
-package dungeonrunner;
-
-/*
+package dungeonrunner;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +18,28 @@ package dungeonrunner;
 /**
  * @author Michael Lieshoff
  */
-public class Config {
+public class Point3D {
 
-    public static final long CLEAN_TIMEOUT = 5000;
+    private final int x;
+    private final int y;
+    private final int z;
 
-    public static final int MAX_ARENAS = 1;
-    public static final int MAX_PLAYER_LOUNGES_PER_ARENA = 4;
-    public static final int MAX_ADMIN_LOUNGES_PER_ARENA = 1;
-    public static final int MAX_VAULTS_PER_ARENA = 4;
-    public static final int MAX_DUNGEONS_PER_VAULT = 4;
+    public Point3D(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 
+    public int getX() {
+        return x;
+    }
 
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
 
 }

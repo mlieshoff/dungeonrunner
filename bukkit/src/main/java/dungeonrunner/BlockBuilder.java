@@ -17,6 +17,7 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+import dungeonrunner.model.Arena;
 import dungeonrunner.model.Entrance;
 import dungeonrunner.model.PlayerContainer;
 import dungeonrunner.system.util.Log;
@@ -31,12 +32,19 @@ import org.bukkit.plugin.Plugin;
  */
 public class BlockBuilder {
 
-    public void buildEntrance(Plugin plugin, Entrance entrance) {
-        buildGround(plugin, 48, 200, 48, 40, 1, Material.STONE);
+    private World world;
+
+    public void buildEntrance(Entrance entrance) {
+        buildGround(48, 200, 48, 20, 1, Material.STONE);
+
+        buildWallWestOst(48, 200, 48, 20, 4, Material.STONE);
+        buildWallWestOst(48 + 20, 200, 48, 20, 4, Material.STONE);
+
+        buildWallNorthSouth(48, 200, 48, 21, 4, Material.STONE);
+        buildWallNorthSouth(48, 200, 48 + 20, 21, 4, Material.STONE);
     }
 
-    public void buildGround(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
-        World world = plugin.getServer().getWorld("world");
+    public void buildGround(int x0, int y0, int z0, int width, int height, Material material) {
         for (int y = y0; y < y0 + height; y++) {
             for (int x = x0; x < x0 + width; x++) {
                 for (int z = z0; z < z0 + width; z++) {
@@ -48,8 +56,7 @@ public class BlockBuilder {
         }
     }
 
-    public void buildWallWestOst(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
-        World world = plugin.getServer().getWorld("world");
+    public void buildWallWestOst(int x0, int y0, int z0, int width, int height, Material material) {
         for (int y = y0; y < y0 + height; y++) {
             for (int z = z0; z < z0 + width; z++) {
                 Location location = new Location(world, x0, y, z);
@@ -59,11 +66,10 @@ public class BlockBuilder {
         }
     }
 
-    public void buildWallNorthSouth(Plugin plugin, int x0, int y0, int z0, int width, int height, Material material) {
-        World world = plugin.getServer().getWorld("world");
+    public void buildWallNorthSouth(int x0, int y0, int z0, int width, int height, Material material) {
         for (int y = y0; y < y0 + height; y++) {
             for (int x = x0; x < x0 + width; x++) {
-                Location location = new Location(world, x0, y, z0);
+                Location location = new Location(world, x, y, z0);
                 Block block = location.getBlock();
                 block.setType(material);
             }
@@ -89,6 +95,19 @@ public class BlockBuilder {
         }
 
         Log.info(this, "reset", "stop");
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public void buildArena(Arena arena) {
+        int i = arena.getId() - 1;
+        Point3D point3D = new Point3D(50 * i, 10, 50 * i);
+
+        buildGround(point3D.getX(), point3D.getY(), point3D.getZ(), 50, 1, Material.STONE);
+
+
     }
 
 }

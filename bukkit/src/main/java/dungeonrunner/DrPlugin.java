@@ -54,10 +54,11 @@ public class DrPlugin extends JavaPlugin implements Listener {
 
         MiniDI.register(EbeanServer.class, getDatabase());
         MiniDI.register(
+                BlockBuilder.class,
                 CharacterManager.class,
                 CharacterDao.class,
-                BlockBuilder.class,
                 Engine.class,
+                Teleporter.class,
                 World.class
         );
 
@@ -76,6 +77,8 @@ public class DrPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
+        MiniDI.get(BlockBuilder.class).setWorld(this.getServer().getWorld("world"));
+        MiniDI.get(Teleporter.class).setWorld(this.getServer().getWorld("world"));
         engine.start();
     }
 
