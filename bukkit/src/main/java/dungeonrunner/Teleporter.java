@@ -30,8 +30,9 @@ public class Teleporter {
     private World world;
 
     public void teleportPlayerToEntrance(Player player) {
-        Log.info(this, "teleportPlayerToEntrance", "teleport to: ");
-        player.teleport(new Location(world, 58, 201, 58));
+        Location target = Config.STRUCTURE_ENTRANCE.centerLocation(world);
+        Log.info(this, "teleportPlayerToEntrance", "teleport to: %s", target);
+        player.teleport(target);
     }
 
     public void setWorld(World world) {

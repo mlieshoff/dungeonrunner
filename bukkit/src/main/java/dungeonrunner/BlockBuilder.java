@@ -20,6 +20,7 @@ package dungeonrunner;
 import dungeonrunner.model.Arena;
 import dungeonrunner.model.Entrance;
 import dungeonrunner.model.PlayerContainer;
+import dungeonrunner.model.StructureInfo;
 import dungeonrunner.system.util.Log;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,13 +36,31 @@ public class BlockBuilder {
     private World world;
 
     public void buildEntrance(Entrance entrance) {
-        buildGround(48, 200, 48, 20, 1, Material.STONE);
+        filledRectangle(Config.STRUCTURE_ENTRANCE, Material.BRICK, 1, 0);
 
-        buildWallWestOst(48, 200, 48, 20, 4, Material.STONE);
-        buildWallWestOst(48 + 20, 200, 48, 20, 4, Material.STONE);
+//        buildWallWestOst(48, 200, 48, 20, 4, Material.STONE);
+//          buildWallWestOst(48 + 20, 200, 48, 20, 4, Material.STONE);
 
-        buildWallNorthSouth(48, 200, 48, 21, 4, Material.STONE);
-        buildWallNorthSouth(48, 200, 48 + 20, 21, 4, Material.STONE);
+//        buildWallNorthSouth(48, 200, 48, 21, 4, Material.STONE);
+//        buildWallNorthSouth(48, 200, 48 + 20, 21, 4, Material.STONE);
+    }
+
+    private void filledRectangle(StructureInfo structureWorld, Material material, int factor, int gap) {
+        int x0 = structureWorld.getStart().getX() * factor + gap;
+        int x1 = structureWorld.getEnd().getX() * factor + gap;
+        int y0 = structureWorld.getStart().getY();
+        int y1 = structureWorld.getEnd().getY();
+        int z0 = structureWorld.getStart().getZ() * factor + gap;
+        int z1 = structureWorld.getEnd().getZ() * factor + gap;
+        for (int y = y0; y < y1; y++) {
+            for (int x = x0; x < x1; x++) {
+                for (int z = z0; z < z1; z++) {
+                    Location location = new Location(world, x, y, z);
+                    Block block = location.getBlock();
+                    block.setType(material);
+                }
+            }
+        }
     }
 
     public void buildGround(int x0, int y0, int z0, int width, int height, Material material) {
@@ -82,17 +101,8 @@ public class BlockBuilder {
 
     public void reset(Plugin plugin) {
         Log.info(this, "reset", "starting... plugin=%s", plugin);
-        World world = plugin.getServer().getWorld("world");
 
-        for (int y = -64; y < 319; y ++) {
-            for (int x = -100; x < 100; x++) {
-                for (int z = -100; z < 100; z++) {
-                    Location location = new Location(world, x, y, z);
-                    Block block = location.getBlock();
-                    block.setType(Material.AIR);
-                }
-            }
-        }
+        filledRectangle(Config.STRUCTURE_WORLD, Material.AIR, 1, 0);
 
         Log.info(this, "reset", "stop");
     }
@@ -102,11 +112,9 @@ public class BlockBuilder {
     }
 
     public void buildArena(Arena arena) {
-        int i = arena.getId() - 1;
-        Point3D point3D = new Point3D(50 * i, 10, 50 * i);
+        int i = arena.getId();
 
-        buildGround(point3D.getX(), point3D.getY(), point3D.getZ(), 50, 1, Material.STONE);
-
+        filledRectangle(Config.STRUCTURE_ARENA, Material.STONE, i, 0);
 
     }
 

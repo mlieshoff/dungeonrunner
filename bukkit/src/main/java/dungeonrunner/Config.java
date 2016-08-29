@@ -17,6 +17,8 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+import dungeonrunner.model.StructureInfo;
+
 /**
  * @author Michael Lieshoff
  */
@@ -30,6 +32,16 @@ public class Config {
     public static final int MAX_VAULTS_PER_ARENA = 4;
     public static final int MAX_DUNGEONS_PER_VAULT = 4;
 
+    public static final StructureInfo STRUCTURE_WORLD = new StructureInfo(
+            new Point3D(-100, -64, -100),
+            new Point3D(100, 319, 100));
 
+    public static final StructureInfo STRUCTURE_ENTRANCE = new StructureInfo(
+            new Point3D(45, 200, 45),
+            new Point3D(55, 205, 55));
+
+    public static final StructureInfo STRUCTURE_ARENA = new StructureInfo(
+            new Point3D(-100, 10, -100),
+            new Point3D(-50, 14, -50));
 
 }

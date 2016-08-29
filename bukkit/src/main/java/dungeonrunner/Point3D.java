@@ -15,6 +15,9 @@ package dungeonrunner;/*
  * limitations under the License.
  */
 
+import org.bukkit.Location;
+import org.bukkit.World;
+
 /**
  * @author Michael Lieshoff
  */
@@ -40,6 +43,23 @@ public class Point3D {
 
     public int getZ() {
         return z;
+    }
+
+    public Point3D center(Point3D to) {
+        return new Point3D(Math.abs(getX() - to.getX()), Math.abs(getY() - to.getY()), Math.abs(getZ() - to.getZ()));
+    }
+
+    public Location location(World world) {
+        return new Location(world, getX(), getY(), getZ());
+    }
+
+    @Override
+    public String toString() {
+        return "Point3D{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 
 }
