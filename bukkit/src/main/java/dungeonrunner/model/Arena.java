@@ -32,8 +32,8 @@ public class Arena extends PlayerContainer {
 
     private final World world;
 
-    private final Map<Integer, Lounge> adminLounges = new ConcurrentHashMap<>();
-    private final Map<Integer, Lounge> playerLounges = new ConcurrentHashMap<>();
+    private final Map<Integer, AdminLounge> adminLounges = new ConcurrentHashMap<>();
+    private final Map<Integer, PlayerLounge> playerLounges = new ConcurrentHashMap<>();
     private final Map<Integer, Vault> vaults = new ConcurrentHashMap<>();
 
     public Arena(World world, int id) {
@@ -41,14 +41,14 @@ public class Arena extends PlayerContainer {
         this.world = world;
     }
 
-    public Lounge createPlayerLounge(int id) {
-        Lounge lounge = new PlayerLounge(this, id);
+    public PlayerLounge createPlayerLounge(int id) {
+        PlayerLounge lounge = new PlayerLounge(this, id);
         playerLounges.put(id, lounge);
         return lounge;
     }
 
     public Lounge createAdminLounge(int id) {
-        Lounge lounge = new AdminLounge(this, id);
+        AdminLounge lounge = new AdminLounge(this, id);
         adminLounges.put(id, lounge);
         return lounge;
     }
@@ -59,12 +59,12 @@ public class Arena extends PlayerContainer {
         return vault;
     }
 
-    public FreeObject<Lounge> findFreePlayerLounge() {
+    public FreeObject<PlayerLounge> findFreePlayerLounge() {
         return findFree(Config.MAX_PLAYER_LOUNGES_PER_ARENA, playerLounges);
     }
 
-    public FreeObject<Lounge> findFreeAdminLounge() {
-        return findFree(Config.MAX_ADMIN_LOUNGES_PER_ARENA, playerLounges);
+    public FreeObject<AdminLounge> findFreeAdminLounge() {
+        return findFree(Config.MAX_ADMIN_LOUNGES_PER_ARENA, adminLounges);
     }
 
     public FreeObject<Vault> findFreeVault() {

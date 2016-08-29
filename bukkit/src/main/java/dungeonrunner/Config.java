@@ -38,7 +38,11 @@ public class Config {
 
     public static final StructureInfo STRUCTURE_ENTRANCE = new StructureInfo(
             new Point3D(45, 200, 45),
-            new Point3D(55, 205, 55));
+            new Point3D(55, 201, 55));
+
+    public static final StructureInfo STRUCTURE_PLAYER_LOUNGE = new StructureInfo(
+            new Point3D(45, 20, 45),
+            new Point3D(55, 21, 55));
 
     public static final StructureInfo STRUCTURE_ARENA = new StructureInfo(
             new Point3D(-100, 10, -100),

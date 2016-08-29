@@ -21,6 +21,7 @@ import dungeonrunner.system.util.Log;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * @author Michael Lieshoff
@@ -31,8 +32,10 @@ public class Teleporter {
 
     public void teleportPlayerToEntrance(Player player) {
         Location target = Config.STRUCTURE_ENTRANCE.centerLocation(world);
+        target.setY(target.getBlockY() + 4);
         Log.info(this, "teleportPlayerToEntrance", "teleport to: %s", target);
-        player.teleport(target);
+        player.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        Log.info(this, "teleportPlayerToEntrance", "teleported");
     }
 
     public void setWorld(World world) {

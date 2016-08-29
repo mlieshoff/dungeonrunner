@@ -28,7 +28,7 @@ import dungeonrunner.system.transaction.TransactionContext;
 import dungeonrunner.system.util.Log;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,6 +41,8 @@ import java.util.List;
 public class DrPlugin extends JavaPlugin implements Listener {
 
     private Engine engine;
+
+    private org.bukkit.World world;
 
     private static final List<Class<?>> DB_CLASSES = new ArrayList<Class<?>>(){{
         add(Character.class);
@@ -62,7 +64,12 @@ public class DrPlugin extends JavaPlugin implements Listener {
                 World.class
         );
 
-        installDDL();
+        try {
+            installDDL();
+            Log.info(this, "onLoad", "database created.");
+        } catch (Exception e) {
+            Log.info(this, "onLoad", "database exists...");
+        }
 
         engine = MiniDI.get(Engine.class);
         engine.setPlugin(this);
@@ -76,9 +83,10 @@ public class DrPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
+        world = getServer().getWorld("world");
         getServer().getPluginManager().registerEvents(this, this);
-        MiniDI.get(BlockBuilder.class).setWorld(this.getServer().getWorld("world"));
-        MiniDI.get(Teleporter.class).setWorld(this.getServer().getWorld("world"));
+        MiniDI.get(BlockBuilder.class).setWorld(world);
+        MiniDI.get(Teleporter.class).setWorld(world);
         engine.start();
     }
 
@@ -89,8 +97,8 @@ public class DrPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerLoginEvent event) {
-        engine.onLogin(event);
+    public void onJoin(PlayerJoinEvent event) {
+        engine.onJoin(event);
     }
 
     @EventHandler

@@ -46,7 +46,10 @@ public class Point3D {
     }
 
     public Point3D center(Point3D to) {
-        return new Point3D(Math.abs(getX() - to.getX()), Math.abs(getY() - to.getY()), Math.abs(getZ() - to.getZ()));
+        return new Point3D(
+                getX() + (to.getX() - getX()) / 2,
+                getY() + (to.getY() - getY()) / 2,
+                getZ() + (to.getZ() - getZ()) / 2);
     }
 
     public Location location(World world) {

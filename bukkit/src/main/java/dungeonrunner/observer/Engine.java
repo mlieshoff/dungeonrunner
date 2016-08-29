@@ -29,7 +29,7 @@ import dungeonrunner.system.di.Inject;
 import dungeonrunner.system.manager.ManagerException;
 import dungeonrunner.system.util.Log;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -65,7 +65,7 @@ public class Engine {
         public void run() {
             long lastClean = 0;
             while(!running) {
-                Log.info(this, "run", "checking...");
+                Log.debug(this, "run", "checking...");
 
                 long now = System.currentTimeMillis();
 
@@ -86,7 +86,7 @@ public class Engine {
                     Thread.interrupted();
                 }
             }
-            Log.info(this, "run", "stopped...");
+            Log.debug(this, "run", "stopped...");
         }
     };
 
@@ -111,8 +111,8 @@ public class Engine {
                     break;
                 case PLAYER_LOUNGE:
                     arena = findArena();
-                    FreeObject<Lounge> loungeFreeObject = arena.findFreePlayerLounge();
-                    Lounge playerLounge = loungeFreeObject.getObject();
+                    FreeObject<PlayerLounge> loungeFreeObject = arena.findFreePlayerLounge();
+                    PlayerLounge playerLounge = loungeFreeObject.getObject();
                     if (loungeFreeObject.isMustCreate()) {
                         playerLounge = arena.createPlayerLounge(loungeFreeObject.getId());
                     }
@@ -121,7 +121,7 @@ public class Engine {
                     break;
                 case ADMIN_LOUNGE:
                     arena = findArena();
-                    FreeObject<Lounge> adminLoungeFreeObject = arena.findFreeAdminLounge();
+                    FreeObject<AdminLounge> adminLoungeFreeObject = arena.findFreeAdminLounge();
                     Lounge adminLounge = adminLoungeFreeObject.getObject();
                     if (adminLoungeFreeObject.isMustCreate()) {
                         adminLounge = arena.createAdminLounge(adminLoungeFreeObject.getId());
@@ -159,14 +159,14 @@ public class Engine {
     }
 
     private void cleanUp() {
-        Log.info(this, "cleanUp", "starting...");
+        Log.debug(this, "cleanUp", "starting...");
         Set<PlayerContainer> cleanUpContainers = world.destroy();
-        Log.info(this, "cleanUp", "    * number of containers to clean: %s", cleanUpContainers.size());
+        Log.debug(this, "cleanUp", "    * number of containers to clean: %s", cleanUpContainers.size());
         for (PlayerContainer playerContainer : cleanUpContainers) {
             Log.info(this, "cleanUp", "        * clean: %s", playerContainer);
             blockBuilder.destroy(playerContainer);
         }
-        Log.info(this, "cleanUp", "stop");
+        Log.debug(this, "cleanUp", "stop");
     }
 
     public Arena findArena() {
@@ -213,8 +213,10 @@ public class Engine {
         tickets.add(new EnterTicket(playerCharacter, PLAYER_LOUNGE));
     }
 
-    public void onEnterPlayerLounge(PlayerCharacter playerCharacter, Lounge playerLounge) {
+    public void onEnterPlayerLounge(PlayerCharacter playerCharacter, PlayerLounge playerLounge) {
         Log.info(this, "onEnterPlayerLounge", "player=%s", playerCharacter.getPlayer().getName());
+        blockBuilder.buildPlayerLounge(playerLounge);
+//        teleporter.teleport(playerCharacter.getPlayer(), );
         playerCharacter.getPlayer().sendMessage(String.format("Welcome to the player lounge '%s' with %s players.", playerLounge.getId(), playerLounge.count()));
     }
 
@@ -233,9 +235,10 @@ public class Engine {
         //
     }
 
-    public void onLogin(PlayerLoginEvent event) {
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Log.info(this, "onLogin", "player=%s", player.getName());
+        Log.info(this, "onJoin", "BEGIN");
+        Log.info(this, "onJoin", "player=%s", player.getName());
         try {
             Character character = characterManager.login(player);
             PlayerCharacter playerCharacter = new PlayerCharacter(player, character);
@@ -244,6 +247,7 @@ public class Engine {
         } catch (ManagerException e) {
             e.printStackTrace();
         }
+        Log.info(this, "onJoin", "END");
     }
 
     public void onLogout(PlayerQuitEvent event) {

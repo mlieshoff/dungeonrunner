@@ -17,10 +17,7 @@ package dungeonrunner;
  * limitations under the License.
  */
 
-import dungeonrunner.model.Arena;
-import dungeonrunner.model.Entrance;
-import dungeonrunner.model.PlayerContainer;
-import dungeonrunner.model.StructureInfo;
+import dungeonrunner.model.*;
 import dungeonrunner.system.util.Log;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +40,10 @@ public class BlockBuilder {
 
 //        buildWallNorthSouth(48, 200, 48, 21, 4, Material.STONE);
 //        buildWallNorthSouth(48, 200, 48 + 20, 21, 4, Material.STONE);
+    }
+
+    public void buildPlayerLounge(PlayerLounge playerLounge) {
+        filledRectangle(Config.STRUCTURE_PLAYER_LOUNGE, Material.SANDSTONE, playerLounge.getId(), 5);
     }
 
     private void filledRectangle(StructureInfo structureWorld, Material material, int factor, int gap) {
