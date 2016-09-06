@@ -22,12 +22,12 @@ import java.util.Set;
 /**
  * @author Michael Lieshoff
  */
-public class Lounge extends PlayerContainer {
+public class Lounge extends Structure {
 
     private final Arena arena;
 
-    public Lounge(Arena arena, int id) {
-        super(id);
+    public Lounge(Arena arena, int id, StructureInfo structureInfo) {
+        super(id, structureInfo);
         this.arena = arena;
     }
 

@@ -17,6 +17,7 @@ package dungeonrunner;
  * limitations under the License.
  */
 
+import dungeonrunner.model.Structure;
 import dungeonrunner.system.util.Log;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,12 +31,12 @@ public class Teleporter {
 
     private World world;
 
-    public void teleportPlayerToEntrance(Player player) {
-        Location target = Config.STRUCTURE_ENTRANCE.centerLocation(world);
+    public void teleportPlayer(Player player, Structure structure) {
+        Location target = structure.getStructureInfo().centerLocation(world);
         target.setY(target.getBlockY() + 4);
-        Log.info(this, "teleportPlayerToEntrance", "teleport to: %s", target);
+        Log.info(this, "teleportPlayer", "teleport to: %s", target);
         player.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        Log.info(this, "teleportPlayerToEntrance", "teleported");
+        Log.info(this, "teleportPlayer", "teleported");
     }
 
     public void setWorld(World world) {

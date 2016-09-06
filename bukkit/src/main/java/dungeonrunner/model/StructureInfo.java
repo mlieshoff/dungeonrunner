@@ -33,8 +33,12 @@ public class StructureInfo {
     }
 
     public Location centerLocation(org.bukkit.World world) {
-        Point3D center = start.center(end);
+        Point3D center = centerPoint();
         return new Location(world, center.getX(), start.getY(), center.getZ());
+    }
+
+    public Point3D centerPoint() {
+        return start.center(end);
     }
 
 }

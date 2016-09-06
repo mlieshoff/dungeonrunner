@@ -33,7 +33,7 @@ public class BlockBuilder {
     private World world;
 
     public void buildEntrance(Entrance entrance) {
-        filledRectangle(Config.STRUCTURE_ENTRANCE, Material.BRICK, 1, 0);
+        filledRectangle(entrance.getStructureInfo(), Material.BRICK, 1, 0);
 
 //        buildWallWestOst(48, 200, 48, 20, 4, Material.STONE);
 //          buildWallWestOst(48 + 20, 200, 48, 20, 4, Material.STONE);
@@ -43,7 +43,7 @@ public class BlockBuilder {
     }
 
     public void buildPlayerLounge(PlayerLounge playerLounge) {
-        filledRectangle(Config.STRUCTURE_PLAYER_LOUNGE, Material.SANDSTONE, playerLounge.getId(), 5);
+        filledRectangle(playerLounge.getStructureInfo(), Material.SANDSTONE, playerLounge.getId(), 5);
     }
 
     private void filledRectangle(StructureInfo structureWorld, Material material, int factor, int gap) {
@@ -58,7 +58,7 @@ public class BlockBuilder {
                 for (int z = z0; z < z1; z++) {
                     Location location = new Location(world, x, y, z);
                     Block block = location.getBlock();
-                    block.setType(material);
+                    block.setType(material, true);
                 }
             }
         }
@@ -100,10 +100,10 @@ public class BlockBuilder {
         Log.info(this, "destroy", "playerContainer=%s", playerContainer);
     }
 
-    public void reset(Plugin plugin) {
+    public void reset(Plugin plugin, dungeonrunner.model.World world) {
         Log.info(this, "reset", "starting... plugin=%s", plugin);
 
-        filledRectangle(Config.STRUCTURE_WORLD, Material.AIR, 1, 0);
+        filledRectangle(world.getStructureInfo(), Material.AIR, 1, 0);
 
         Log.info(this, "reset", "stop");
     }
@@ -115,7 +115,7 @@ public class BlockBuilder {
     public void buildArena(Arena arena) {
         int i = arena.getId();
 
-        filledRectangle(Config.STRUCTURE_ARENA, Material.STONE, i, 0);
+        filledRectangle(arena.getStructureInfo(), Material.STONE, i, 0);
 
     }
 

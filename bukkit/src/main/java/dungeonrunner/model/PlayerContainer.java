@@ -1,6 +1,7 @@
 package dungeonrunner.model;
 
 import dungeonrunner.system.util.CollectionUtils;
+import dungeonrunner.system.util.Log;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -83,6 +84,8 @@ public class PlayerContainer {
         if (freeObject.isMustCreate()) {
             Collection<Integer> freeIds = CollectionUtils.subtract(maximalIds, foundIds);
             if (freeIds.size() == 0) {
+                Log.warn(this, "findFree", "don't found free: max=%s, objects=%s, maximalIds=%s, foundIds=%s, freeIds=%s",
+                        max, objects.keySet(), maximalIds, foundIds, freeIds);
                 return null;
             } else {
                 int id = CollectionUtils.first(freeIds);

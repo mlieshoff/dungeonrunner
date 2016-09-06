@@ -26,12 +26,16 @@ import dungeonrunner.player.CharacterManager;
 import dungeonrunner.system.di.MiniDI;
 import dungeonrunner.system.transaction.TransactionContext;
 import dungeonrunner.system.util.Log;
+import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +44,19 @@ import java.util.List;
  */
 public class DrPlugin extends JavaPlugin implements Listener {
 
+    private static final List<Class<?>> DB_CLASSES = new ArrayList<Class<?>>(){{
+        add(Character.class);
+    }};
+
     private Engine engine;
 
     private org.bukkit.World world;
 
-    private static final List<Class<?>> DB_CLASSES = new ArrayList<Class<?>>(){{
-        add(Character.class);
-    }};
+    private File serverFolder;
+
+    public DrPlugin(PluginLoader pluginLoader, Server mockServer, PluginDescriptionFile pdf, File pluginDirectory, File pluginFile) {
+        super(pluginLoader, mockServer, pdf, pluginDirectory, pluginFile);
+    }
 
     @Override
     public void onLoad() {
@@ -104,6 +114,14 @@ public class DrPlugin extends JavaPlugin implements Listener {
     @EventHandler
     public void onLogout(PlayerQuitEvent event) {
         engine.onLogout(event);
+    }
+
+    public void setServerFolder(File serverFolder) {
+        this.serverFolder = serverFolder;
+    }
+
+    public File getServerFolder() {
+        return serverFolder;
     }
 
 }

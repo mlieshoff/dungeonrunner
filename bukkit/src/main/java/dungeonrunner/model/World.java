@@ -18,6 +18,7 @@ package dungeonrunner.model;
  */
 
 import dungeonrunner.Config;
+import dungeonrunner.Point3D;
 import dungeonrunner.player.PlayerCharacter;
 import dungeonrunner.system.util.Log;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Michael Lieshoff
  */
-public class World extends PlayerContainer {
+public class World extends Structure {
 
     private Entrance entrance;
 
@@ -41,7 +42,17 @@ public class World extends PlayerContainer {
     private Map<PlayerCharacter, PlayerContainer> characters2Container = new ConcurrentHashMap<>();
 
     public World() {
-        super(1);
+        super(1, new StructureInfo(
+                new Point3D(-100, -64, -100),
+                new Point3D(100, 319, 100))
+        );
+        entrance = new Entrance(this);
+    }
+
+    public Arena createArena(int id) {
+        Arena arena = new Arena(this, id);
+        arenas.put(arena.getId(), arena);
+        return arena;
     }
 
     public void enterEntrance(PlayerCharacter playerCharacter) {
@@ -55,7 +66,6 @@ public class World extends PlayerContainer {
     }
 
     public void enterArena(PlayerCharacter playerCharacter, Arena arena) {
-        arenas.put(arena.getId(), arena);
         addToTargetLocation(playerCharacter, arena);
     }
 

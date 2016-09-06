@@ -17,13 +17,26 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
+import dungeonrunner.Point3D;
+
 /**
  * @author Michael Lieshoff
  */
 public class PlayerLounge extends Lounge {
 
     public PlayerLounge(Arena arena, int id) {
-        super(arena, id);
+        super(arena, id, new StructureInfo(
+                new Point3D(
+                        arena.getStructureInfo().getStart().getX(),
+                        arena.getStructureInfo().getStart().getY(),
+                        arena.getStructureInfo().getStart().getZ()
+                ),
+                new Point3D(
+                        arena.getStructureInfo().getEnd().getX(),
+                        arena.getStructureInfo().getEnd().getY(),
+                        arena.getStructureInfo().getEnd().getZ()
+                ))
+        );
     }
 
 }

@@ -17,18 +17,38 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
+import dungeonrunner.Point3D;
+
 import java.util.Set;
 
 /**
  * @author Michael Lieshoff
  */
-public class Entrance extends PlayerContainer {
+public class Entrance extends Structure {
 
     private final World world;
 
     public Entrance(World world) {
-        super(1);
+        super(1, createStructureInfo(world));
         this.world = world;
+    }
+
+    private static StructureInfo createStructureInfo(World world) {
+        int width = 4;
+        int height = 1;
+        Point3D center = world.getStructureInfo().centerPoint();
+        return new StructureInfo(
+                new Point3D(
+                        center.getX() - width / 2,
+                        center.getY() - height,
+                        center.getZ() - width / 2
+                ),
+                new Point3D(
+                        center.getX() + width / 2,
+                        center.getY() + height,
+                        center.getZ() + width / 2
+                )
+        );
     }
 
     @Override

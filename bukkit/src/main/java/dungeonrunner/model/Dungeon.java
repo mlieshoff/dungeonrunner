@@ -17,17 +17,30 @@ package dungeonrunner.model;
  * limitations under the License.
  */
 
+import dungeonrunner.Point3D;
+
 import java.util.Set;
 
 /**
  * @author Michael Lieshoff
  */
-public class Dungeon extends PlayerContainer {
+public class Dungeon extends Structure {
 
     private final Vault vault;
 
     public Dungeon(Vault vault, int id) {
-        super(id);
+        super(id, new StructureInfo(
+                new Point3D(
+                        vault.getArena().getStructureInfo().getStart().getX(),
+                        vault.getArena().getStructureInfo().getStart().getY(),
+                        vault.getArena().getStructureInfo().getStart().getZ()
+                ),
+                new Point3D(
+                        vault.getArena().getStructureInfo().getEnd().getX(),
+                        vault.getArena().getStructureInfo().getEnd().getY(),
+                        vault.getArena().getStructureInfo().getEnd().getZ()
+                ))
+        );
         this.vault = vault;
     }
 

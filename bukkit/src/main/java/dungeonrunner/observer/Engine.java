@@ -21,13 +21,23 @@ import dungeonrunner.BlockBuilder;
 import dungeonrunner.Config;
 import dungeonrunner.Teleporter;
 import dungeonrunner.location.LogicalLocationType;
-import dungeonrunner.model.*;
+import dungeonrunner.model.AdminLounge;
+import dungeonrunner.model.Arena;
+import dungeonrunner.model.Dungeon;
+import dungeonrunner.model.Entrance;
+import dungeonrunner.model.FreeObject;
+import dungeonrunner.model.Lounge;
+import dungeonrunner.model.PlayerContainer;
+import dungeonrunner.model.PlayerLounge;
+import dungeonrunner.model.Vault;
+import dungeonrunner.model.World;
 import dungeonrunner.player.Character;
 import dungeonrunner.player.CharacterManager;
 import dungeonrunner.player.PlayerCharacter;
 import dungeonrunner.system.di.Inject;
 import dungeonrunner.system.manager.ManagerException;
 import dungeonrunner.system.util.Log;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -60,37 +70,29 @@ public class Engine {
 
     private Plugin plugin;
 
+    private volatile long lastClean = 0;
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            long lastClean = 0;
-            while(!running) {
-                Log.debug(this, "run", "checking...");
+            Log.info(this, "run", "checking...");
 
-                long now = System.currentTimeMillis();
+            long now = System.currentTimeMillis();
 
-                Ticket ticket = tickets.poll();
-                while(ticket != null) {
-                    processTicket(ticket);
-                    ticket = tickets.poll();
-                }
-
-                if (now > lastClean + Config.CLEAN_TIMEOUT) {
-                    lastClean = now;
-                    cleanUp();
-                }
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.interrupted();
-                }
+            Ticket ticket = tickets.poll();
+            while(ticket != null) {
+                processTicket(ticket);
+                ticket = tickets.poll();
             }
-            Log.debug(this, "run", "stopped...");
+
+            if (now > lastClean + Config.CLEAN_TIMEOUT) {
+                lastClean = now;
+                cleanUp();
+            }
+
+            Log.info(this, "run", "stopped...");
         }
     };
-
-    private Thread thread = new Thread(runnable);
 
     private volatile boolean running;
 
@@ -173,7 +175,7 @@ public class Engine {
         FreeObject<Arena> arenaFreeObject = world.findFreeArena();
         Arena arena = arenaFreeObject.getObject();
         if (arenaFreeObject.isMustCreate()) {
-            arena = createArena(world, arenaFreeObject.getId());
+            arena = world.createArena(arenaFreeObject.getId());
         }
         return arena;
     }
@@ -181,10 +183,9 @@ public class Engine {
     public void start() {
         if (!running) {
             Log.info(this, "start", "starting...");
-            blockBuilder.reset(plugin);
-            world.setEntrance(new Entrance(world));
+            blockBuilder.reset(plugin, world);
             blockBuilder.buildEntrance(world.getEntrance());
-            thread.start();
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, runnable, 20, 20);
         }
     }
 
@@ -195,20 +196,15 @@ public class Engine {
         }
     }
 
-    private Arena createArena(World world, int id) {
-        Arena arena = new Arena(world, id);
-        return arena;
-    }
-
     public void onEnterEntrance(PlayerCharacter playerCharacter, Entrance entrance) {
         Log.info(this, "onEnterEntrance", "player=%s", playerCharacter.getPlayer().getName());
         tickets.add(new EnterTicket(playerCharacter, LogicalLocationType.ARENA));
         Player player = playerCharacter.getPlayer();
-        teleporter.teleportPlayerToEntrance(player);
+        teleporter.teleportPlayer(player, entrance);
     }
 
     public void onEnterArena(PlayerCharacter playerCharacter, Arena arena) {
-        Log.info(this, "onEnterArena", "player=%s", playerCharacter.getPlayer().getName());
+        Log.info(this, "onEnterArena", "player=%s, arena=%s", playerCharacter.getPlayer().getName(), arena);
         blockBuilder.buildArena(arena);
         tickets.add(new EnterTicket(playerCharacter, PLAYER_LOUNGE));
     }
@@ -216,7 +212,7 @@ public class Engine {
     public void onEnterPlayerLounge(PlayerCharacter playerCharacter, PlayerLounge playerLounge) {
         Log.info(this, "onEnterPlayerLounge", "player=%s", playerCharacter.getPlayer().getName());
         blockBuilder.buildPlayerLounge(playerLounge);
-//        teleporter.teleport(playerCharacter.getPlayer(), );
+        teleporter.teleportPlayer(playerCharacter.getPlayer(), playerLounge);
         playerCharacter.getPlayer().sendMessage(String.format("Welcome to the player lounge '%s' with %s players.", playerLounge.getId(), playerLounge.count()));
     }
 

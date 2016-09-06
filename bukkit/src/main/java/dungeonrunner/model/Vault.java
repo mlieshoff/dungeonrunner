@@ -18,6 +18,7 @@ package dungeonrunner.model;
  */
 
 import dungeonrunner.Config;
+import dungeonrunner.Point3D;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,14 +27,25 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Michael Lieshoff
  */
-public class Vault extends PlayerContainer {
+public class Vault extends Structure {
 
     private final Arena arena;
 
     private Map<Integer, Dungeon> dungeons = new ConcurrentHashMap<>();
 
     public Vault(Arena arena, int id) {
-        super(id);
+        super(id, new StructureInfo(
+                new Point3D(
+                        arena.getStructureInfo().getStart().getX(),
+                        arena.getStructureInfo().getStart().getY(),
+                        arena.getStructureInfo().getStart().getZ()
+                ),
+                new Point3D(
+                        arena.getStructureInfo().getEnd().getX(),
+                        arena.getStructureInfo().getEnd().getY(),
+                        arena.getStructureInfo().getEnd().getZ()
+                ))
+        );
         this.arena = arena;
     }
 

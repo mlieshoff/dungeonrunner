@@ -18,6 +18,7 @@ package dungeonrunner.model;
  */
 
 import dungeonrunner.Config;
+import dungeonrunner.Point3D;
 import dungeonrunner.system.util.Log;
 
 import java.util.HashSet;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Michael Lieshoff
  */
-public class Arena extends PlayerContainer {
+public class Arena extends Structure {
 
     private final World world;
 
@@ -37,8 +38,42 @@ public class Arena extends PlayerContainer {
     private final Map<Integer, Vault> vaults = new ConcurrentHashMap<>();
 
     public Arena(World world, int id) {
-        super(id);
+        super(id, createStructureInfo(world, id));
         this.world = world;
+    }
+
+    private static StructureInfo createStructureInfo(World world, int id) {
+        int width = 50;
+        int height = 1;
+        Point3D startWorld = world.getStructureInfo().getStart();
+        Point3D endWorld = world.getStructureInfo().getEnd();
+        if (id <= 2) {
+            return new StructureInfo(
+                    new Point3D(
+                            startWorld.getX(),
+                            startWorld.getY(),
+                            startWorld.getZ() + (width * id - 1)
+                    ),
+                    new Point3D(
+                            endWorld.getX(),
+                            endWorld.getY() + height,
+                            endWorld.getZ() + (width * id - 1)
+                    )
+            );
+        } else {
+            return new StructureInfo(
+                    new Point3D(
+                            startWorld.getX() + (width * id - 1),
+                            startWorld.getY(),
+                            startWorld.getZ() + (width * id - 1)
+                    ),
+                    new Point3D(
+                            endWorld.getX() + (width * id - 1),
+                            endWorld.getY() + height,
+                            endWorld.getZ() + (width * id - 1)
+                    )
+            );
+        }
     }
 
     public PlayerLounge createPlayerLounge(int id) {
