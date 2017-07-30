@@ -1,4 +1,4 @@
-package dungeonrunner;
+package dungeonrunner.v2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,16 +17,15 @@ package dungeonrunner;
  * limitations under the License.
  */
 
-import com.avaje.ebean.EbeanServer;
-import dungeonrunner.model.World;
-import dungeonrunner.observer.Engine;
-import dungeonrunner.player.Character;
-import dungeonrunner.player.CharacterDao;
-import dungeonrunner.player.CharacterManager;
+import dungeonrunner.BlockBuilder;
+import dungeonrunner.system.di.Inject;
 import dungeonrunner.system.di.MiniDI;
-import dungeonrunner.system.transaction.TransactionContext;
 import dungeonrunner.system.util.Log;
+import dungeonrunner.v2.structures.Blueprints;
+import dungeonrunner.v2.structures.StructureHolder;
+import dungeonrunner.v2.structures.StructurePopulator;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -45,14 +44,21 @@ import java.util.List;
 public class DrPlugin extends JavaPlugin implements Listener {
 
     private static final List<Class<?>> DB_CLASSES = new ArrayList<Class<?>>(){{
-        add(Character.class);
     }};
 
-    private Engine engine;
-
-    private org.bukkit.World world;
-
     private File serverFolder;
+
+    @Inject
+    private BuildWorker buildWorker;
+
+    @Inject
+    private StructurePopulator structurePopulator;
+
+    @Inject
+    private StructureHolder structureHolder;
+
+    @Inject
+    private Teleporter teleporter;
 
     public DrPlugin() {
         //
@@ -66,27 +72,6 @@ public class DrPlugin extends JavaPlugin implements Listener {
     public void onLoad() {
         super.onLoad();
         Log.init(this);
-        TransactionContext.init(getDatabase());
-
-        MiniDI.register(EbeanServer.class, getDatabase());
-        MiniDI.register(
-                BlockBuilder.class,
-                CharacterManager.class,
-                CharacterDao.class,
-                Engine.class,
-                Teleporter.class,
-                World.class
-        );
-
-        try {
-            installDDL();
-            Log.info(this, "onLoad", "database created.");
-        } catch (Exception e) {
-            Log.info(this, "onLoad", "database exists...");
-        }
-
-        engine = MiniDI.get(Engine.class);
-        engine.setPlugin(this);
     }
 
     @Override
@@ -97,27 +82,61 @@ public class DrPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        world = getServer().getWorld("world");
         getServer().getPluginManager().registerEvents(this, this);
-        MiniDI.get(BlockBuilder.class).setWorld(world);
-        MiniDI.get(Teleporter.class).setWorld(world);
-        engine.start();
+
+        MiniDI.register(World.class, getServer().getWorld("world"));
+        MiniDI.register(
+                Teleporter.class,
+                Blueprints.class,
+                BlockBuilder.class,
+                BuildWorker.class,
+                StructurePopulator.class,
+                StructureHolder.class
+        );
+        MiniDI.register(DrPlugin.class, this);
+
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                buildWorker.build();
+            }
+        }, 20, 20);
+
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                structurePopulator.checkAndPopulate();
+            }
+        }, 20, 20);
     }
 
     @Override
     public void onDisable() {
-        engine.stop();
         super.onDisable();
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        engine.onJoin(event);
+        event.getPlayer().sendMessage("Entering glass house...");
+        if (!structureHolder.exists("GLASSHOUSE")) {
+            for (;;) {
+                if (structureHolder.exists("GLASSHOUSE")) {
+                    break;
+                }
+                event.getPlayer().sendMessage("Please wait for glass house...");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        teleporter.teleportPlayer(event.getPlayer(), structureHolder.get("GLASSHOUSE"));
     }
 
     @EventHandler
     public void onLogout(PlayerQuitEvent event) {
-        engine.onLogout(event);
+
     }
 
     public void setServerFolder(File serverFolder) {

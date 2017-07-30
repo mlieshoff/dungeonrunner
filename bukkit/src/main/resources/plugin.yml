@@ -5,5 +5,5 @@ author: CrazyCreeper
 authors: [carzycreeper]
 website:
 
-main: dungeonrunner.DrPlugin
+main: dungeonrunner.v2.DrPlugin
 database: true

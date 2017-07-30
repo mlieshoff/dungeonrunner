@@ -79,6 +79,26 @@ public class MiniDI {
 
     private void registerIntern(Class<?> clazz, Object bean) throws IllegalAccessException, InstantiationException {
         instances.put(clazz, bean);
+        Log.info(this, "registerIntern", "checking properties from %s", clazz.getName());
+        Object instance = instances.get(clazz);
+        for (Field field : clazz.getDeclaredFields()) {
+            Log.info(this, "registerIntern", "    checking field %s", field.getName());
+            Annotation inject = field.getAnnotation(Inject.class);
+            if (inject != null) {
+                Class<?> fieldClass = field.getType();
+                Object object = instances.get(fieldClass);
+                if (object == null) {
+                    Log.error(this, "registerIntern", "cannot set property %s in bean: %s", field.getName(),
+                            clazz.getName());
+                } else {
+                    field.setAccessible(true);
+                    field.set(instance, object);
+                    Log.info(this, "registerIntern", "set property %s in bean %s to %s", field.getName(),
+                            clazz.getName(), object);
+                }
+            }
+        }
+
     }
 
     public static <T> T get(Class<T> observerClass) {
